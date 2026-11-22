@@ -51,8 +51,9 @@ v0.3.9 交付时，`package.json` 写的是 `private: true`、`license: UNLICENS
 | `lib/**` 与本机 0.3.9 逐字节对照 | **一致**（6 个代码/样式文件 + 6 个素材，SHA256 全等） |
 | 本机 `npm test`（3 套零依赖冒烟） | PASS |
 | 干净克隆 `npm test` + `npm pack` | PASS |
-| GitHub Actions（Node 20 / 22） | 见仓库 badge |
-| Release 附件哈希 | 与 `release.json`、`releases/SHA256SUMS` 一致 |
+| GitHub Actions（run 45015039625） | **Node 20 / Node 22 均 success** |
+| 远端 git 树 | `45b86809cdd53c47b6b8388dd78b550305cd5138`，与本地 `HEAD^{tree}` 一致（160 个 blob） |
+| Release 附件 | GitHub 侧 `digest=sha256:61049915…a0db4`，与本地 `releases/SHA256SUMS` 一致（56,567,344 B） |
 
 ## 5. 已知边界（不冒充已验证）
 
