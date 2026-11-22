@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JARVIS MK VII · UI 概念示意</title>
+<style>
+  :root{
+    --void:#030405; --base:#050608; --panel:#0a0c10; --panel-2:#0e1116;
+    --ink:#eef2f6; --ink-2:#b9c2cc; --ink-3:#8a959f; --ink-4:#5f6870;
+    --gold:#ffc46b; --gold-hi:#ffd89a; --gold-deep:#b07a2a;
+    --crimson:#ff3b30; --crimson-deep:#8a0e14; --cyan:#2fd3e8;
+    --line-1:rgba(255,255,255,.055); --line-2:rgba(255,255,255,.09);
+    --line-3:rgba(255,255,255,.13); --line-4:rgba(255,255,255,.18);
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:ui-monospace,"Cascadia Mono",Consolas,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html{margin:0;width:1550px;height:830px;overflow:hidden;background:var(--void)}
+  body{margin:0;width:1550px;height:830px;overflow:hidden;background:transparent;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;font-size:14px}
+  button{font:inherit;color:inherit}
+  .ambient{position:fixed;inset:0;z-index:-1;overflow:hidden;background:var(--void)}
+  .ambient img{position:absolute;inset:-3%;width:106%;height:106%;object-fit:cover;object-position:50% 44%;
+    mix-blend-mode:normal;opacity:.92;filter:brightness(.76) contrast(1.08) saturate(1.1);transform:scale(1.02)}
+  .ambient .scrim{position:absolute;inset:0;background:
+    radial-gradient(ellipse 88% 78% at 52% 46%,rgba(3,4,6,.72) 0,rgba(3,4,6,.52) 52%,rgba(3,4,6,.14) 82%,rgba(3,4,6,0) 100%),
+    linear-gradient(180deg,rgba(3,4,6,.82) 0,rgba(3,4,6,.12) 18%,rgba(3,4,6,.30) 80%,rgba(3,4,6,.85) 100%)}
+  .ambient .vig{position:absolute;inset:0;background:radial-gradient(120% 100% at 50% 50%,transparent 38%,rgba(0,0,0,.55) 100%)}
+  .ambient .grain{position:absolute;inset:0;opacity:.04;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E")}
+  .ambient .scan{position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;
+    background:repeating-linear-gradient(to bottom,rgba(255,255,255,.4) 0 1px,transparent 1px 3px)}
+
+  .titlebar{position:fixed;inset:0 0 auto;height:40px;z-index:20;display:flex;align-items:center;justify-content:space-between;
+    padding:0 14px;background:rgba(5,6,8,.92);border-bottom:1px solid rgba(255,255,255,.055);color:var(--ink-2);
+    font-size:12px;letter-spacing:.02em}
+  .titlebar .menu{display:flex;gap:18px}
+  .titlebar .win{display:flex;gap:18px;color:var(--ink-3);font-family:var(--mono);font-size:11px}
+
+  .app{position:fixed;inset:40px 0 0;display:flex}
+  .sidebar{width:345px;flex:none;position:relative;display:flex;flex-direction:column;padding:18px 0 12px;
+    background:linear-gradient(180deg,rgba(8,10,14,.92),rgba(6,8,11,.84));
+    -webkit-backdrop-filter:blur(22px) saturate(125%);backdrop-filter:blur(22px) saturate(125%);
+    border-right:1px solid rgba(255,255,255,.06);
+    box-shadow:inset -1px 0 0 rgba(255,196,107,.045),inset 0 1px 0 rgba(255,255,255,.05)}
+  .brand{display:flex;align-items:center;gap:10px;padding:8px 22px 18px}
+  .brand .mark{width:26px;height:26px;flex:none}
+  .brand .word{display:flex;align-items:center;gap:8px}
+  .brand .word b{font-size:20px;font-weight:650;letter-spacing:-.02em}
+  .brand .word span{font-family:var(--mono);font-size:9px;letter-spacing:.16em;border:1px solid var(--line-3);
+    padding:2px 5px;border-radius:2px;color:var(--ink-2)}
+  .brand .mk{margin-left:auto;font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--gold);
+    border:1px solid rgba(255,196,107,.28);padding:3px 6px;border-radius:3px;background:rgba(255,196,107,.06)}
+  .newchat{margin:0 18px 14px;height:38px;border-radius:10px;border:1px solid rgba(255,196,107,.24);
+    background:linear-gradient(180deg,rgba(255,196,107,.13),rgba(255,196,107,.07));color:var(--gold-hi);
+    display:flex;align-items:center;gap:8px;padding:0 14px;font-size:13px;cursor:default;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 8px 20px rgba(0,0,0,.18)}
+  .newchat .plus{width:16px;height:16px;border:1px solid rgba(255,196,107,.45);border-radius:50%;display:grid;place-items:center;font-size:12px;line-height:1}
+  .nav{display:flex;flex-direction:column;gap:2px;padding:0 12px}
+  .nav .item{display:flex;align-items:center;gap:11px;height:36px;padding:0 10px;border-radius:8px;color:var(--ink-2);font-size:13px}
+  .nav .item svg{width:16px;height:16px;color:var(--ink-3)}
+  .nav .item:hover{background:rgba(255,255,255,.035)}
+  .section-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px 8px;color:var(--ink-3);font-size:12px}
+  .section-head .tails{display:flex;gap:12px;color:var(--ink-4)}
+  .section-head .tails svg{width:14px;height:14px}
+  .workspace{display:flex;align-items:center;gap:8px;padding:6px 22px;color:var(--ink-2);font-size:12.5px}
+  .workspace .folder{width:15px;height:15px;color:var(--gold);opacity:.8}
+  .sessions{display:flex;flex-direction:column;gap:1px;padding:4px 10px;overflow:hidden}
+  .srow{position:relative;display:flex;align-items:center;gap:8px;padding:8px 10px 8px 14px;border-radius:7px;color:var(--ink-2);font-size:12.5px}
+  .srow .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.18);flex:none}
+  .srow .tt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+  .srow .time{font-size:10.5px;color:var(--ink-4);flex:none}
+  .srow.active{background:linear-gradient(90deg,rgba(255,196,107,.11),rgba(255,196,107,.035));color:var(--ink)}
+  .srow.active::before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:2px;border-radius:2px;background:var(--gold);box-shadow:0 0 10px rgba(255,196,107,.55)}
+  .srow.active .dot{background:var(--gold);box-shadow:0 0 8px rgba(255,196,107,.7)}
+  .srow:hover:not(.active){background:rgba(255,255,255,.03)}
+  .srow .kind{width:14px;height:14px;color:var(--ink-4);flex:none}
+  .sidebar .foot{margin-top:auto;padding:12px 18px 0;border-top:1px solid var(--line-1)}
+  .ticks{display:flex;gap:4px;align-items:flex-end;height:22px;padding:0 4px 10px;opacity:.55}
+  .ticks i{flex:1;height:5px;background:linear-gradient(180deg,rgba(255,196,107,.55),rgba(255,196,107,.08));border-radius:1px}
+  .ticks i:nth-child(3n){height:10px;opacity:.85}.ticks i:nth-child(4n){height:14px;opacity:.65}
+  .foot-row{display:flex;align-items:center;justify-content:space-between;padding:8px 4px;color:var(--ink-3);font-size:12px}
+  .foot-row .left{display:flex;align-items:center;gap:9px}
+  .foot-row svg{width:15px;height:15px}
+  .foot-row .ver{font-family:var(--mono);font-size:9.5px;color:var(--ink-4)}
+
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;position:relative}
+  header.top{height:76px;flex:none;display:flex;flex-direction:column;justify-content:flex-start;padding:11px 28px 0 28px;
+    border-bottom:1px solid rgba(255,255,255,.07);position:relative}
+  .titleline{display:flex;align-items:center;gap:12px;min-height:30px}
+  .titleline .bar{width:2px;height:15px;background:var(--gold);border-radius:2px;box-shadow:0 0 10px rgba(255,196,107,.5)}
+  .titleline .name{font-size:14px;font-weight:550;letter-spacing:.01em;white-space:nowrap}
+  .titleline .sub{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--ink-4);margin-left:2px}
+  .titleline .right{margin-left:auto;display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--ink-3)}
+  .titleline .pill{display:flex;align-items:center;gap:6px;border:1px solid var(--line-2);padding:4px 8px;border-radius:999px;color:var(--gold);background:rgba(255,196,107,.05)}
+  .titleline .pill i{width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 7px var(--gold)}
+  .tabs{display:flex;align-items:flex-end;gap:24px;height:35px}
+  .tab{position:relative;padding:0 0 8px;font-size:13px;color:var(--ink-3)}
+  .tab.on{color:var(--ink)}
+  .tab.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--gold);border-radius:2px;box-shadow:0 0 10px rgba(255,196,107,.5)}
+  .tabs .more{margin-left:auto;color:var(--ink-4);font-size:15px;letter-spacing:.1em;padding-bottom:8px}
+
+  .stage{flex:1;min-height:0;position:relative;overflow:hidden}
+  .chat{position:absolute;inset:0;overflow:hidden;padding:22px 40px 190px;display:flex;flex-direction:column;align-items:center}
+  .thread{width:860px;max-width:100%;display:flex;flex-direction:column;gap:18px}
+  .userline{display:flex;justify-content:flex-end}
+  .bubble{max-width:620px;background:linear-gradient(180deg,rgba(255,196,107,.13),rgba(255,196,107,.08));
+    border:1px solid rgba(255,196,107,.22);border-radius:20px 20px 6px 20px;padding:11px 16px;font-size:13.5px;line-height:1.65;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 12px 30px rgba(0,0,0,.22)}
+  .bubble .meta{display:flex;justify-content:flex-end;gap:8px;margin-top:5px;font-family:var(--mono);font-size:9px;color:rgba(255,196,107,.55);letter-spacing:.08em}
+  .assist{display:flex;gap:14px}
+  .assist .rail{width:2px;flex:none;border-radius:2px;background:linear-gradient(180deg,rgba(255,196,107,.75),rgba(255,196,107,.08));box-shadow:0 0 12px rgba(255,196,107,.18)}
+  .assist .body{min-width:0;flex:1}
+  .assist .name{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--ink-3);margin-bottom:8px}
+  .assist .name b{color:var(--gold);font-weight:500}
+  .assist p{margin:0 0 10px;font-size:13.5px;line-height:1.7;color:var(--ink-2)}
+  .assist p strong{color:var(--ink);font-weight:600}
+  .assist ul{margin:0 0 12px;padding-left:18px;color:var(--ink-2);font-size:13px;line-height:1.8}
+  .assist li::marker{color:var(--gold)}
+  .assist code.inline{font-family:var(--mono);font-size:11.5px;background:rgba(255,255,255,.06);border:1px solid var(--line-2);border-radius:4px;padding:1px 5px;color:var(--gold-hi)}
+  .tool{background:rgba(255,255,255,.024);border:1px solid rgba(255,255,255,.07);border-radius:12px;overflow:hidden;margin:0 0 10px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+  .tool .thead{display:flex;align-items:center;gap:9px;padding:9px 12px;border-bottom:1px solid var(--line-1);font-family:var(--mono);font-size:10.5px;color:var(--ink-2)}
+  .tool .thead .ic{width:15px;height:15px;color:var(--gold)}
+  .tool .thead b{font-weight:500;color:var(--ink)}
+  .tool .thead .st{margin-left:auto;font-size:9px;letter-spacing:.1em;color:var(--ink-4)}
+  .tool .thead .st.done{color:#54d98c}.tool .thead .st.run{color:var(--gold)}
+  .tool .tbody{padding:10px 12px;font-family:var(--mono);font-size:10.5px;line-height:1.7;background:rgba(0,0,0,.16);color:#aab4be;white-space:nowrap;overflow:hidden}
+  .tool .tbody .g{color:var(--gold-hi)}.tool .tbody .c{color:#64c8d8}.tool .tbody .d{color:var(--ink-4)}
+  .codeblock{border:1px solid var(--line-1);border-radius:12px;overflow:hidden;background:#07090c;margin:2px 0 12px}
+  .codeblock .cbhead{display:flex;align-items:center;gap:8px;padding:7px 12px;background:rgba(255,255,255,.025);border-bottom:1px solid var(--line-1);
+    font-family:var(--mono);font-size:9.5px;color:var(--ink-3);letter-spacing:.08em}
+  .codeblock .cbhead .dotg{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px rgba(255,196,107,.5)}
+  .codeblock pre{margin:0;padding:12px 14px;font-family:var(--mono);font-size:10.5px;line-height:1.75;color:#b7c0c9;overflow:hidden}
+  .codeblock .k{color:var(--gold)}.codeblock .v{color:#7fd6e2}.codeblock .s{color:#c9a46a}
+  .running{display:flex;align-items:center;gap:10px;margin:4px 0 2px;padding:8px 12px;border:1px solid rgba(255,196,107,.2);border-radius:10px;
+    background:linear-gradient(90deg,rgba(255,196,107,.07),transparent 65%);position:relative;overflow:hidden}
+  .running::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,196,107,.12) 48%,transparent 76%);
+    transform:translateX(-100%);animation:scan 2.8s linear infinite}
+  @keyframes scan{to{transform:translateX(100%)}}
+  .running .rdot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 9px var(--gold)}
+  .running .rt{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--gold-hi)}
+  .running .rm{margin-left:auto;font-family:var(--mono);font-size:9.5px;color:var(--ink-4);letter-spacing:.08em}
+
+  .hero{position:absolute;inset:0 0 190px;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 40px}
+  .hero .ring{position:absolute;width:560px;height:560px;border-radius:50%;border:1px solid rgba(255,196,107,.10);top:50%;left:50%;transform:translate(-50%,-54%)}
+  .hero .ring::before{content:"";position:absolute;inset:34px;border-radius:50%;border:1px dashed rgba(255,196,107,.12)}
+  .hero .ring::after{content:"";position:absolute;inset:90px;border-radius:50%;border:1px solid rgba(255,255,255,.06)}
+  .hero .mark{width:44px;height:44px;margin-bottom:18px;filter:drop-shadow(0 0 18px rgba(255,196,107,.25))}
+  .hero h1{margin:0;font-size:30px;font-weight:600;letter-spacing:-.02em;color:var(--ink)}
+  .hero .sub{margin:10px 0 0;font-family:var(--mono);font-size:9.5px;letter-spacing:.28em;color:var(--gold);text-transform:uppercase}
+  .hero .line{width:220px;height:1px;margin:18px 0 22px;background:linear-gradient(90deg,transparent,rgba(255,196,107,.55),transparent)}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .chip{border:1px solid var(--line-2);background:rgba(255,255,255,.03);border-radius:999px;padding:8px 14px;font-size:12px;color:var(--ink-2);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+  .chip b{color:var(--gold);font-weight:500;margin-right:6px}
+
+  .composer-wrap{position:absolute;left:0;right:0;bottom:0;padding:0 24px 18px;display:flex;justify-content:center;pointer-events:none}
+  .composer{pointer-events:auto;width:860px;max-width:100%;position:relative;border-radius:28px;padding:15px 16px 11px;
+    background:linear-gradient(180deg,rgba(14,17,22,.90),rgba(9,11,15,.94));
+    -webkit-backdrop-filter:blur(26px) saturate(130%);backdrop-filter:blur(26px) saturate(130%);
+    border:1px solid rgba(255,255,255,.10);
+    box-shadow:0 24px 60px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08),0 0 0 1px rgba(255,196,107,.04)}
+  .composer::before{content:"";position:absolute;inset:-1.6px;border-radius:29.6px;padding:1.6px;pointer-events:none;
+    background:conic-gradient(from 18deg,rgba(255,196,107,.92) 0deg 34deg,rgba(255,196,107,.12) 34deg 150deg,rgba(255,59,48,.62) 166deg 198deg,rgba(255,196,107,.10) 208deg 360deg);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+    mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
+    opacity:.72;animation:spin 12s linear infinite}
+  .composer::after{content:"";position:absolute;inset:-5px;border-radius:33px;pointer-events:none;
+    background:conic-gradient(from 18deg,rgba(255,196,107,.45) 0deg 34deg,transparent 60deg 150deg,rgba(255,59,48,.30) 166deg 198deg,transparent 220deg);
+    filter:blur(7px);opacity:.28;animation:spin 15s linear infinite reverse}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .composer .input{min-height:38px;font-size:14px;line-height:1.6;color:var(--ink);padding:2px 4px;outline:none}
+  .composer .input .ph{color:rgba(255,255,255,.32)}
+  .composer .caret{display:inline-block;width:1px;height:16px;background:var(--gold);vertical-align:-2px;margin-left:1px;box-shadow:0 0 6px rgba(255,196,107,.8)}
+  .composer .row{display:flex;align-items:center;gap:8px;margin-top:8px}
+  .tchip{display:flex;align-items:center;gap:6px;height:26px;padding:0 9px;border:1px solid var(--line-1);border-radius:7px;font-size:10.5px;color:var(--ink-3);background:rgba(255,255,255,.02)}
+  .tchip b{font-weight:500;color:var(--ink-2)}
+  .tchip .led{width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px rgba(255,196,107,.6)}
+  .send{margin-left:auto;width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,196,107,.55);background:linear-gradient(180deg,#ffd08a,#e9a13b);
+    color:#1a1206;display:grid;place-items:center;box-shadow:0 0 20px rgba(255,196,107,.28),inset 0 1px 0 rgba(255,255,255,.5)}
+  .send svg{width:15px;height:15px}
+  .composer .hint{font-family:var(--mono);font-size:9px;color:var(--ink-4);letter-spacing:.1em;margin-left:2px}
+
+  .hud{position:fixed;inset:0;pointer-events:none;z-index:30}
+  .hud .br{position:absolute;width:22px;height:22px;border:1px solid rgba(255,196,107,.24)}
+  .hud .br.tl{left:14px;top:14px;border-right:0;border-bottom:0}
+  .hud .br.tr{right:14px;top:14px;border-left:0;border-bottom:0}
+  .hud .br.bl{left:14px;bottom:14px;border-right:0;border-top:0}
+  .hud .br.br{right:14px;bottom:14px;border-left:0;border-top:0}
+  .hud .status{position:absolute;right:26px;top:52px;text-align:right;font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:rgba(255,196,107,.62);line-height:1.9}
+  .hud .status b{color:rgba(238,242,246,.55);font-weight:400}
+  .hud .foot{position:absolute;left:365px;bottom:14px;font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;color:rgba(185,194,204,.35)}
+  .hud .foot i{color:rgba(255,196,107,.6);font-style:normal}
+
+  body.scene-hero .chat{display:none}
+  body.scene-hero .hero{display:flex}
+  body.scene-hero .ambient img{opacity:.96;filter:brightness(.86) contrast(1.06) saturate(1.08)}
+  body.scene-hero .ambient .scrim{background:
+    radial-gradient(ellipse 80% 70% at 50% 45%,rgba(3,4,6,.52) 0,rgba(3,4,6,.30) 55%,rgba(3,4,6,.55) 100%),
+    linear-gradient(180deg,rgba(3,4,6,.78) 0,rgba(3,4,6,.14) 20%,rgba(3,4,6,.30) 78%,rgba(3,4,6,.84) 100%)}
+  body.scene-focus .ambient img{opacity:.52;filter:brightness(.52) contrast(1.12) saturate(1.02)}
+  body.scene-focus .ambient .scrim{background:
+    radial-gradient(ellipse 66% 58% at 50% 58%,rgba(3,4,6,.66) 0,rgba(3,4,6,.4) 55%,rgba(3,4,6,.75) 100%),
+    linear-gradient(180deg,rgba(3,4,6,.9) 0,rgba(3,4,6,.3) 20%,rgba(3,4,6,.5) 78%,rgba(3,4,6,.9) 100%)}
+  body.scene-focus .composer{box-shadow:0 24px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.10),0 0 0 1px rgba(255,196,107,.10),0 0 40px rgba(255,196,107,.10)}
+  body.scene-focus .composer::before{opacity:1;animation-duration:6s}
+  body.scene-focus .composer::after{opacity:.5;animation-duration:7.2s}
+  body.scene-chat .hero{display:none}
+</style>
+</head>
+<body class="scene-chat">
+  <div class="ambient">
+    <img src="bg-frame-15.jpg" alt="">
+    <div class="scrim"></div><div class="vig"></div><div class="grain"></div><div class="scan"></div>
+  </div>
+
+  <div class="titlebar">
+    <div class="menu"><span>应用</span><span>编辑</span></div>
+    <div class="win"><span>—</span><span>□</span><span>×</span></div>
+  </div>
+
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <defs><linearGradient id="lg" x1="4" y1="2" x2="28" y2="30" gradientUnits="userSpaceOnUse"><stop stop-color="#ffd89a"/><stop offset="1" stop-color="#e9a13b"/></linearGradient></defs>
+          <path d="M16 2.8 28.6 9.6v12.8L16 29.2 3.4 22.4V9.6L16 2.8Z" stroke="url(#lg)" stroke-width="1.4"/>
+          <path d="M9.2 13.2c2.6-2.4 6.2-3.1 9.4-1.7 1.8.8 3.2 2.2 4.2 3.8-2.2-.3-4.2.4-5.7 1.7-1.3 1.1-2.2 2.5-2.7 4.1-2.5-1.8-4.4-4.4-5.2-7.9Z" fill="rgba(255,196,107,.16)"/>
+          <circle cx="16" cy="16" r="2.2" fill="#ffc46b"/>
+        </svg>
+        <div class="word"><b>deepseek</b><span>HARNESS</span></div>
+        <div class="mk">MK VII</div>
+      </div>
+      <button class="newchat"><span class="plus">＋</span>新会话</button>
+      <nav class="nav">
+        <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10 4h4v3h3v4h3v4h-3v4h-3v3h-4v-3H7v-4H4v-4h3V7h3V4Z"/><path d="M10 11h4v4h-4z"/></svg>插件</div>
+        <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>自动化任务</div>
+        <div class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 5h5v5H5zM14 5h5v5h-5zM5 14h5v5H5zM14 14h5v5h-5z"/></svg>更多</div>
+      </nav>
+      <div class="section-head"><span>工作区</span><span class="tails">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14"/></svg>
+      </span></div>
+      <div class="workspace"><svg class="folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>dsh-startup-Jarvis</div>
+      <div class="sessions">
+        <div class="srow active"><span class="dot"></span><span class="tt">动态背景与毛玻璃 UI 优化规划</span><span class="time">5 分钟</span></div>
+        <div class="srow"><svg class="kind" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6 4h8l4 4v12H6z"/><path d="M14 4v4h4"/></svg><span class="tt">Iron Man's Jarvis AI assistant</span><span class="time">14 分钟</span></div>
+        <div class="srow"><svg class="kind" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 5h5v5H5zM14 5h5v5h-5zM5 14h5v5H5zM14 14h5v5h-5z"/></svg><span class="tt">伦理sop(5)</span><span class="time">1 小时</span></div>
+        <div class="srow"><svg class="kind" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 5h5v5H5zM14 5h5v5h-5zM5 14h5v5H5zM14 14h5v5h-5z"/></svg><span class="tt">大冶中医补做整改报告</span><span class="time">3 小时</span></div>
+        <div class="srow"><svg class="kind" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 5h5v5H5zM14 5h5v5h-5zM5 14h5v5H5zM14 14h5v5h-5z"/></svg><span class="tt">work</span><span class="time">昨天</span></div>
+        <div class="srow"><svg class="kind" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 5h5v5H5zM14 5h5v5h-5zM5 14h5v5H5zM14 14h5v5h-5z"/></svg><span class="tt">dsh-startup-moss2</span><span class="time">昨天</span></div>
+      </div>
+      <div class="foot">
+        <div class="ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="foot-row">
+          <span class="left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1H21v4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>设置</span>
+          <span class="ver">v0.2.2-rc.5</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="top">
+        <div class="titleline">
+          <span class="bar"></span>
+          <span class="name">动态背景与毛玻璃 UI 优化规划</span>
+          <span class="sub">JARVIS MK VII</span>
+          <span class="right">
+            <span class="pill"><i></i><span id="model">MODEL // DEEPSEEK-FLASH</span></span>
+            <span id="clock">23:58</span>
+          </span>
+        </div>
+        <div class="tabs">
+          <span class="tab on">对话</span><span class="tab">轨迹</span><span class="tab">变更</span>
+          <span class="more">···</span>
+        </div>
+      </header>
+
+      <div class="stage">
+        <section class="hero">
+          <div class="ring"></div>
+          <svg class="mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path d="M16 2.8 28.6 9.6v12.8L16 29.2 3.4 22.4V9.6L16 2.8Z" stroke="#ffc46b" stroke-width="1.2"/>
+            <path d="M9.2 13.2c2.6-2.4 6.2-3.1 9.4-1.7 1.8.8 3.2 2.2 4.2 3.8-2.2-.3-4.2.4-5.7 1.7-1.3 1.1-2.2 2.5-2.7 4.1-2.5-1.8-4.4-4.4-5.2-7.9Z" fill="rgba(255,196,107,.18)"/>
+            <circle cx="16" cy="16" r="2.2" fill="#ffc46b"/>
+          </svg>
+          <h1>Welcome home, Sir.</h1>
+          <div class="sub">DEEPSEEK HARNESS // SYSTEM ONLINE</div>
+          <div class="line"></div>
+          <div class="chips">
+            <span class="chip"><b>01</b>开始新会话</span>
+            <span class="chip"><b>02</b>打开工作区</span>
+            <span class="chip"><b>03</b>查看插件</span>
+          </div>
+        </section>
+
+        <section class="chat">
+          <div class="thread">
+            <div class="userline">
+              <div class="bubble">1 hud，其他按推荐，开始
+                <div class="meta"><span>SIR</span><span>23:56</span></div>
+              </div>
+            </div>
+
+            <div class="assist">
+              <div class="rail"></div>
+              <div class="body">
+                <div class="name"><b>J.A.R.V.I.S.</b><span>· DEEPSEEK-FLASH · 00:42</span></div>
+                <p>收到。背景锁定 <code class="inline">hud</code> 清晰模式，其余按推荐值进入 P0。先给你三张关键帧示意：空会话、会话流、输入区聚焦。</p>
+                <ul>
+                  <li>循环：原片 30s 电源循环（首尾帧差 0.60/255，天然无缝）</li>
+                  <li>玻璃：侧栏 / 输入卡 / 弹窗三处真 <code class="inline">backdrop-filter</code>，其余半透膜</li>
+                  <li>动效：新消息 180ms 入场；历史不回放；输入环状态驱动</li>
+                </ul>
+
+                <div class="tool">
+                  <div class="thead"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 6h16v12H4z"/><path d="m7 10 2 2-2 2M12 14h5"/></svg><b>ops_bash</b><span>· 生成 1080p 背景资产</span><span class="st done">DONE · 11.1 MB</span></div>
+                  <div class="tbody"><span class="d">$</span> ffmpeg -i <span class="v">source.mp4</span> -vf <span class="s">"scale=1920:1080:flags=lanczos"</span> \
+  -c:v libx264 -preset slow -crf <span class="g">22</span> -movflags +faststart -an <span class="v">bg-1080.mp4</span></div>
+                </div>
+
+                <div class="tool">
+                  <div class="thead"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h6"/></svg><b>edit</b><span>· package/lib/skin.css</span><span class="st run">RUNNING</span></div>
+                  <div class="tbody"><span class="g">+</span> <span class="v">--dj-gold</span>: <span class="s">#ffc46b</span>;  <span class="g">+</span> <span class="v">--dj-crimson</span>: <span class="s">#ff3b30</span>;  <span class="g">+</span> <span class="v">--dj-glass</span>: <span class="s">blur(26px)</span>;</div>
+                </div>
+
+                <div class="codeblock">
+                  <div class="cbhead"><span class="dotg"></span><span>skin.css</span><span style="margin-left:auto">JARVIS · 1.6px ring</span></div>
+                  <pre><span class="k">.composer::before</span> {
+  background: <span class="v">conic-gradient</span>(from 18deg, <span class="s">rgba(255,196,107,.92)</span> 0 34deg, ...);
+  <span class="v">mask-composite</span>: exclude;
+  <span class="v">animation</span>: ring 12s linear infinite;
+}</pre>
+                </div>
+
+                <div class="running"><span class="rdot"></span><span class="rt">DEEP DIVING</span><span class="RM" style="color:var(--ink-4);font-size:9px">BUILDING SKIN.CSS</span><span class="rm">00:42</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="composer-wrap">
+          <div class="composer">
+            <div class="input">继续，按 mark7 做全套<span class="caret"></span></div>
+            <div class="row">
+              <span class="tchip"><span class="led"></span><b>deepseek-flash</b></span>
+              <span class="tchip">完全访问</span>
+              <span class="tchip">计划模式</span>
+              <span class="hint">⌘ ↵ 发送</span>
+              <span class="send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M6 11l6-6 6 6"/></svg></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="hud" aria-hidden="true">
+    <i class="br tl"></i><i class="br tr"></i><i class="br bl"></i><i class="br br"></i>
+    <div class="foot"><i>SYS</i> 0.2.2-rc.5 · PROFILE DESKTOP · <i>SESSION 001</i></div>
+  </div>
+
+<script>
+  const scene = new URLSearchParams(location.search).get('scene') || 'chat';
+  document.body.classList.remove('scene-chat','scene-hero','scene-focus');
+  document.body.classList.add('scene-' + scene);
+  const now = new Date();
+  document.getElementById('clock').textContent = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  if (scene === 'focus') { document.querySelector('.composer .input').innerHTML = '继续，按 mark7 做全套<span class="caret"></span>'; }
+  if (scene === 'hero') { document.querySelector('.composer .input').innerHTML = '<span class="ph">告诉 JARVIS 你想做什么…</span><span class="caret"></span>'; }
+</script>
+</body>
+</html>

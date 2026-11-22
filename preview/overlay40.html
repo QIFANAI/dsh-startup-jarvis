@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><title>JARVIS overlay v0.4</title>
+<style>html,body{margin:0;padding:0;background:#000;overflow:hidden}#stage{display:block;width:1920px;height:1080px}</style>
+<canvas id="stage" width="1920" height="1080"></canvas>
+<script src="drive.js"></script>
+<script src="overlay40.js"></script>
+<script>
+(function(){
+  var q = new URLSearchParams(location.search);
+  var j = window.__jarvis;
+  if (q.has('capture')) { j.seek(0).then(function(){ j.ready = true; }); return; }
+  var start = 0;
+  function loop(){ var t=(performance.now()-start)/1000; if(t>=j.duration){j.seek(j.duration);return;} j.seek(t); requestAnimationFrame(loop); }
+  addEventListener('click', function(){ start = performance.now(); requestAnimationFrame(loop); });
+  document.fonts.ready.then(function(){ start = performance.now(); requestAnimationFrame(loop); });
+})();
+</script></html>

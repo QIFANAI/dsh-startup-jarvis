@@ -1,0 +1,11 @@
+# ---- 构建产物（由 GitHub Release 附件提供） ----
+releases/*.tgz
+release/*.zip
+*.zip
+*.tgz
+
+# ---- 依赖与系统垃圾 ----
+node_modules/
+*.log
+.DS_Store
+Thumbs.db

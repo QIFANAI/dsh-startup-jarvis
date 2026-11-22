@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<title>JARVIS boot v2 · DeepSeek Harness</title>
+<style>
+  html,body{margin:0;padding:0;background:#000;overflow:hidden}
+  #stage{display:block;width:1920px;height:1080px;transform-origin:0 0}
+  #fit{position:fixed;inset:0;overflow:hidden}
+</style>
+<div id="fit"><canvas id="stage" width="1920" height="1080"></canvas></div>
+<script src="jarvis2.js"></script>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var j = window.__jarvis;
+  function fit() {
+    if (q.has('capture')) return;
+    var s = Math.min(innerWidth / j.width, innerHeight / j.height);
+    var c = document.getElementById('stage');
+    c.style.transform = 'scale(' + s + ')';
+    c.style.marginLeft = ((innerWidth - j.width * s) / 2) + 'px';
+    c.style.marginTop = ((innerHeight - j.height * s) / 2) + 'px';
+  }
+  addEventListener('resize', fit); fit();
+  if (q.has('capture')) {
+    var t0 = q.has('t') ? parseFloat(q.get('t')) : 0;
+    j.seek(t0).then(function () { j.ready = true; });
+    return;
+  }
+  if (q.has('t')) { j.seek(parseFloat(q.get('t'))); return; }
+  var start = 0, running = false;
+  function loop() {
+    var t = (performance.now() - start) / 1000;
+    if (t >= j.duration) { j.seek(j.duration); running = false; return; }
+    j.seek(t);
+    requestAnimationFrame(loop);
+  }
+  function play() { start = performance.now(); if (!running) { running = true; requestAnimationFrame(loop); } }
+  addEventListener('click', play);
+  addEventListener('keydown', function (e) { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); play(); } });
+  window.__jarvisReady = j.ready;
+  var iv = setInterval(function () { if (j.ready) { clearInterval(iv); play(); } }, 60);
+})();
+</script>
+</html>

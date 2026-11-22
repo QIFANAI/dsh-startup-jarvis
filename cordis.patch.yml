@@ -1,0 +1,5 @@
+# dsh-startup-jarvis — DSH bundle patch
+# 只挂 Host 半侧：负责 /dsh-jarvis 路由（视频/脚本/配置）与 index.html 首屏注入。
+- insert:
+    - id: dsh-startup-jarvis
+      name: dsh-startup-jarvis

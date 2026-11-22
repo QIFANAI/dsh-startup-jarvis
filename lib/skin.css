@@ -1,0 +1,1431 @@
+/* ============================================================================
+ * dsh-startup-jarvis · JARVIS MK VII · DSH 操作界面皮肤（skin.css）
+ * ----------------------------------------------------------------------------
+ * 作用域：html.dj-skin（没有该类时本文件零命中）
+ * 档位：  .dj-skin--glass（默认）/--full/--accent（P4 再接档位，P1 先 glass）
+ * 背景：  html.dj-skin--bg-hud / --bg-ambient / --bg-poster
+ * 动效：  html.dj-skin--motion-full / --motion-reduced / --motion-off
+ * 职责：  只做颜色/背景/阴影/伪元素/装饰层；不改字号、行高、字体栈、宽高、
+ *         padding、margin、border —— 宿主元素一律用 inset shadow 画边。
+ * 宿主：  DSH 0.2.2-rc.5（选择器在 asar 内逐条复核；见 docs/v0.6-UI皮肤总规划.md）
+ * ========================================================================== */
+
+@property --dj-ring-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 18deg;
+}
+
+/* ============================================================================
+ * 1. 皮肤私有调色板 + 宿主 token 覆盖
+ * ========================================================================== */
+html.dj-skin {
+  --dj-void: #030405;
+  --dj-base: #050608;
+  --dj-panel-1: #0a0c10;
+  --dj-panel-2: #0e1116;
+  --dj-ink: #eef2f6;
+  --dj-ink-2: #b9c2cc;
+  --dj-ink-3: #8a959f;
+  --dj-ink-4: #5f6870;
+  --dj-gold: #ffc46b;
+  --dj-gold-hi: #ffd89a;
+  --dj-gold-deep: #b07a2a;
+  --dj-crimson: #ff3b30;
+  --dj-crimson-deep: #8a0e14;
+  --dj-cyan: #2fd3e8;
+  --dj-green: #54d98c;
+  --dj-line-1: rgba(255, 255, 255, .055);
+  --dj-line-2: rgba(255, 255, 255, .09);
+  --dj-line-3: rgba(255, 255, 255, .13);
+  --dj-line-4: rgba(255, 255, 255, .18);
+  --dj-bg-opacity: .92;
+  --dj-bg-brightness: .76;
+  --dj-bg-scale: 1.03;
+  --dj-px: 0px;
+  --dj-py: 0px;
+  --dj-grain: .04;
+  --dj-scan: .05;
+  --dj-corner: .22;
+  --dj-glass-a: 1;
+  --dj-ring-a: .72;
+  --dj-shadow-composer: 0 24px 60px rgba(0, 0, 0, .55);
+  background: var(--dj-void);
+}
+
+/* 深色宿主 token（html.dj-skin body 特异性 0,1,2 > 宿主 body[data-ds-dark-theme] 0,1,1） */
+html.dj-skin body {
+  --dsw-alias-bg-base: var(--dj-base);
+  --dsw-alias-bg-layer-1: var(--dj-panel-1);
+  --dsw-alias-bg-layer-2: var(--dj-panel-2);
+  --dsw-alias-bg-layer-3: #12161c;
+  --dsw-alias-bg-overlay: #161b22;
+  --dsw-alias-bg-module-platform: #0b0e13;
+  --dsw-alias-bg-skeleton: rgba(255, 255, 255, .04);
+  --dsw-alias-bg-mask-1: rgba(0, 0, 0, .55);
+  --dsw-alias-bg-mask-2: rgba(0, 0, 0, .30);
+  --dsw-alias-bg-mask-3: rgba(0, 0, 0, .65);
+  --dsw-specific-sidebar-fill: #06080b;          /* Windows 原生 titlebar 读它，保持不透明 */
+  --dsw-specific-input-major: #0a0d11;
+  --dsw-specific-bubble: #12161d;
+  --dsw-specific-bubble-highlight: #1a2029;
+  --dsw-specific-menu: #0d1015;
+  --dsw-menu-surface-fill: rgba(13, 16, 21, .84);
+  --dsw-menu-backdrop-filter: blur(40px) saturate(140%);
+  --dsw-menu-group-header-fill: rgba(9, 11, 15, .92);
+  --dsw-specific-selector: #141922;
+  --dsw-specific-tip: #141922;
+  --dsw-specific-sidebar-nav-item-active: rgba(255, 196, 107, .10);
+  --dsw-specific-sidebar-nav-item-active-accent: rgba(255, 196, 107, .16);
+  --dsw-specific-sidebar-nav-item-hover: rgba(255, 255, 255, .04);
+  --dsw-alias-border-l1: var(--dj-line-1);
+  --dsw-alias-border-l2: var(--dj-line-2);
+  --dsw-alias-border-l3: var(--dj-line-3);
+  --dsw-alias-border-l4: var(--dj-line-4);
+  --dsw-alias-label-primary: var(--dj-ink);
+  --dsw-alias-label-secondary: var(--dj-ink-2);
+  --dsw-alias-label-tertiary: var(--dj-ink-3);
+  --dsw-alias-label-caption: var(--dj-ink-4);
+  --dsw-alias-label-dimmed: #4a535b;
+  --dsw-alias-label-primary-foreground: #120d05;
+  --dsw-alias-brand-primary: var(--dj-ink);
+  --dsw-alias-state-business-primary: var(--dj-gold);
+  --dsw-alias-link: var(--dj-gold);
+  --dsw-alias-state-idle-primary: var(--dj-ink-4);
+  --dsw-alias-state-success-primary: var(--dj-green);
+  --dsw-alias-state-warn-primary: #f5b942;
+  --dsw-alias-state-error-primary: #ff5a5a;
+  --dsw-focus-ring-color: var(--dj-gold);
+  --dsw-alias-markdown-code-block: #07090c;
+  --dsw-alias-markdown-inline-code: rgba(255, 255, 255, .06);
+  --dsw-alias-interactive-bg-hover: rgba(255, 196, 107, .07);
+  --dsw-alias-interactive-bg-active: rgba(255, 196, 107, .12);
+  --dsw-alias-button-primary-fill: var(--dj-gold);
+  --dsw-alias-button-primary-hover: var(--dj-gold-hi);
+  --dsw-alias-settings-card-fill: rgba(255, 255, 255, .024);
+  --dsw-alias-settings-card-stroke: var(--dj-line-2);
+  --dsw-alias-hovercard-bg: rgba(12, 15, 20, .92);
+  --dsw-alias-tooltip-bg: rgba(10, 12, 16, .94);
+  --dsw-alias-tooltip-label: var(--dj-ink);
+  --dsw-alias-menu-icon: var(--dj-ink-3);
+  --dsw-alias-scrollbar-bg-l1: rgba(255, 255, 255, .10);
+  --dsw-alias-scrollbar-bg-l2: rgba(255, 255, 255, .16);
+  --dsw-alias-scrollbar-hover-l1: rgba(255, 196, 107, .28);
+  --dsw-alias-scrollbar-hover-l2: rgba(255, 196, 107, .38);
+  --dsh-scrollbar-thumb: rgba(255, 255, 255, .14);
+  --dsh-scrollbar-thumb-hover: rgba(255, 196, 107, .34);
+}
+
+/* 浅色“昼面”：P1 先覆盖关键 token；P4 再细调 */
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) {
+  --dsw-alias-bg-base: #e9edf1;
+  --dsw-alias-bg-layer-1: #f7f9fb;
+  --dsw-alias-bg-layer-2: #ffffff;
+  --dsw-alias-bg-layer-3: #eef2f6;
+  --dsw-alias-bg-overlay: #ffffff;
+  --dsw-alias-bg-module-platform: #ffffff;
+  --dsw-alias-bg-skeleton: rgba(10, 14, 20, .05);
+  --dsw-alias-bg-mask-1: rgba(10, 14, 20, .30);
+  --dsw-alias-bg-mask-2: rgba(10, 14, 20, .16);
+  --dsw-alias-bg-mask-3: rgba(10, 14, 20, .40);
+  --dsw-specific-sidebar-fill: #e9edf1;
+  --dsw-specific-selector: #ffffff;
+  --dsw-specific-tip: #ffffff;
+  --dsw-specific-input-major: #ffffff;
+  --dsw-specific-bubble: #e7edf3;
+  --dsw-specific-bubble-highlight: #dbe5ee;
+  --dsw-specific-menu: #ffffff;
+  --dsw-menu-surface-fill: rgba(255, 255, 255, .86);
+  --dsw-menu-group-header-fill: rgba(255, 255, 255, .94);
+  --dsw-alias-border-l1: rgba(10, 14, 20, .06);
+  --dsw-alias-border-l2: rgba(10, 14, 20, .10);
+  --dsw-alias-border-l3: rgba(10, 14, 20, .14);
+  --dsw-alias-border-l4: rgba(10, 14, 20, .18);
+  --dsw-alias-label-primary: #0b0f14;
+  --dsw-alias-label-secondary: #3a4653;
+  --dsw-alias-label-tertiary: #5f6b78;
+  --dsw-alias-label-caption: #6f7a84;
+  --dsw-alias-label-dimmed: #b9c9da;
+  --dsw-alias-label-primary-foreground: #ffffff;
+  --dsw-alias-state-business-primary: #a96600;
+  --dsw-alias-link: #a96600;
+  --dsw-focus-ring-color: #a96600;
+  --dsw-alias-markdown-code-block: #f2f5f8;
+  --dsw-alias-markdown-inline-code: rgba(10, 14, 20, .05);
+  --dsw-alias-interactive-bg-hover: rgba(169, 102, 0, .07);
+  --dsw-alias-interactive-bg-active: rgba(169, 102, 0, .12);
+  --dsw-alias-button-primary-fill: #1a1d22;
+  --dsw-alias-button-primary-hover: #2b3038;
+  --dsw-alias-settings-card-fill: rgba(255, 255, 255, .72);
+  --dsw-alias-hovercard-bg: rgba(255, 255, 255, .96);
+  --dsw-alias-tooltip-bg: rgba(255, 255, 255, .96);
+  --dsw-alias-tooltip-label: #0b0f14;
+  --dsh-scrollbar-thumb: rgba(10, 14, 20, .18);
+  --dsh-scrollbar-thumb-hover: rgba(169, 102, 0, .40);
+  --dj-bg-opacity: .30;
+  --dj-bg-brightness: 1.04;
+  --dj-corner: .35;
+  --dj-grain: .025;
+  --dj-scan: .02;
+}
+
+/* ============================================================================
+ * 2. 清空 7 个绘制面（token 保持不透明，透明只落在元素上）
+ * ========================================================================== */
+html.dj-skin body {
+  background: transparent !important;
+  background-image: none !important;
+}
+html.dj-skin [class*="mP3x-q_frame"] { background: transparent !important; }
+html.dj-skin [class*="sidebarCol" i] { background: transparent !important; }
+html.dj-skin [class*="sidebarCol" i] > div { background: transparent !important; }
+html.dj-skin [class*="centerCol" i] { background: transparent !important; }
+html.dj-skin [class*="bottomRow" i] { background: transparent !important; }
+html.dj-skin [class*="rightbarCol" i] { background: transparent !important; }
+html.dj-skin div:has(> [data-conversation-region="chat"]) { background: transparent !important; }
+html.dj-skin [data-composer-seat] { background: transparent !important; }
+html.dj-skin [data-conversation-region="chat"] { background: transparent !important; }
+
+/* ============================================================================
+ * 3. 背景层（由 skin.js 创建 #dsh-jarvis-ambient）
+ * ========================================================================== */
+html.dj-skin #dsh-jarvis-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+  background: var(--dj-void);
+}
+html.dj-skin #dsh-jarvis-ambient .dj-bg-video,
+html.dj-skin #dsh-jarvis-ambient .dj-bg-poster {
+  position: absolute;
+  inset: -4%;
+  width: 108%;
+  height: 108%;
+  object-fit: cover;
+  object-position: 50% 45%;
+  opacity: var(--dj-bg-opacity);
+  filter: brightness(var(--dj-bg-brightness)) contrast(1.08) saturate(1.06);
+  transform: translate3d(var(--dj-px), var(--dj-py), 0) scale(var(--dj-bg-scale));
+  will-change: transform;
+  pointer-events: none;
+}
+html.dj-skin #dsh-jarvis-ambient .dj-bg-poster {
+  background-size: cover;
+  background-position: 50% 45%;
+  filter: blur(18px) brightness(var(--dj-bg-brightness)) saturate(1.02);
+}
+html.dj-skin #dsh-jarvis-ambient .dj-bg-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(46% 62% at 7% 42%, rgba(255, 59, 48, .10) 0, rgba(255, 59, 48, 0) 70%),
+    radial-gradient(36% 44% at 5% 88%, rgba(255, 196, 107, .06) 0, rgba(255, 196, 107, 0) 70%),
+    radial-gradient(ellipse 88% 78% at 52% 46%, rgba(3, 4, 6, .78) 0, rgba(3, 4, 6, .56) 52%, rgba(3, 4, 6, .16) 82%, rgba(3, 4, 6, 0) 100%),
+    linear-gradient(180deg, rgba(3, 4, 6, .84) 0, rgba(3, 4, 6, .14) 18%, rgba(3, 4, 6, .34) 80%, rgba(3, 4, 6, .86) 100%);
+}
+html.dj-skin #dsh-jarvis-ambient .dj-bg-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 100% at 50% 50%, transparent 38%, rgba(0, 0, 0, .55) 100%);
+}
+html.dj-skin #dsh-jarvis-ambient .dj-bg-grain {
+  position: absolute;
+  inset: 0;
+  opacity: var(--dj-grain);
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+}
+html.dj-skin #dsh-jarvis-ambient .dj-bg-scan {
+  position: absolute;
+  inset: 0;
+  opacity: var(--dj-scan);
+  mix-blend-mode: overlay;
+  background: repeating-linear-gradient(to bottom, rgba(255, 255, 255, .4) 0 1px, transparent 1px 3px);
+}
+
+/* 背景模式：hud 清晰 / ambient 预模糊（预模糊资产已带模糊，别再 CSS blur） */
+html.dj-skin--bg-ambient #dsh-jarvis-ambient .dj-bg-scrim {
+  background:
+    radial-gradient(ellipse 84% 76% at 52% 46%, rgba(3, 4, 6, .50) 0, rgba(3, 4, 6, .30) 55%, rgba(3, 4, 6, .08) 85%, rgba(3, 4, 6, 0) 100%),
+    linear-gradient(180deg, rgba(3, 4, 6, .72) 0, rgba(3, 4, 6, .10) 20%, rgba(3, 4, 6, .24) 80%, rgba(3, 4, 6, .78) 100%);
+}
+html.dj-skin--bg-poster #dsh-jarvis-ambient .dj-bg-video { display: none; }
+html.dj-skin--bg-poster #dsh-jarvis-ambient .dj-bg-poster { display: block; }
+
+/* Hero 场景：HUD 更亮一档（标题区对比度实测 12:1，有空间） */
+html.dj-skin[data-dj-scene="hero"] #dsh-jarvis-ambient .dj-bg-video {
+  opacity: calc(var(--dj-bg-opacity) * 1.02);
+  filter: brightness(calc(var(--dj-bg-brightness) * 1.06)) contrast(1.06) saturate(1.06);
+}
+html.dj-skin[data-dj-scene="hero"] #dsh-jarvis-ambient .dj-bg-scrim {
+  background:
+    radial-gradient(46% 62% at 7% 42%, rgba(255, 59, 48, .11) 0, rgba(255, 59, 48, 0) 70%),
+    radial-gradient(36% 44% at 5% 88%, rgba(255, 196, 107, .07) 0, rgba(255, 196, 107, 0) 70%),
+    radial-gradient(ellipse 88% 78% at 52% 46%, rgba(3, 4, 6, .70) 0, rgba(3, 4, 6, .46) 52%, rgba(3, 4, 6, .12) 84%, rgba(3, 4, 6, 0) 100%),
+    linear-gradient(180deg, rgba(3, 4, 6, .82) 0, rgba(3, 4, 6, .10) 18%, rgba(3, 4, 6, .26) 80%, rgba(3, 4, 6, .84) 100%);
+}
+
+/* 会话场景：阅读优先，HUD 降一档（hero 仍保持亮） */
+html.dj-skin[data-dj-scene="chat"] #dsh-jarvis-ambient .dj-bg-video {
+  opacity: calc(var(--dj-bg-opacity) * .88);
+  filter: brightness(calc(var(--dj-bg-brightness) * .90)) contrast(1.04) saturate(1.02);
+}
+html.dj-skin[data-dj-scene="chat"] #dsh-jarvis-ambient .dj-bg-scrim {
+  background:
+    radial-gradient(46% 62% at 7% 42%, rgba(255, 59, 48, .08) 0, rgba(255, 59, 48, 0) 70%),
+    radial-gradient(36% 44% at 5% 88%, rgba(255, 196, 107, .05) 0, rgba(255, 196, 107, 0) 70%),
+    radial-gradient(ellipse 86% 76% at 50% 46%, rgba(3, 4, 6, .86) 0, rgba(3, 4, 6, .66) 52%, rgba(3, 4, 6, .24) 84%, rgba(3, 4, 6, 0) 100%),
+    linear-gradient(180deg, rgba(3, 4, 6, .86) 0, rgba(3, 4, 6, .18) 18%, rgba(3, 4, 6, .38) 80%, rgba(3, 4, 6, .88) 100%);
+}
+html.dj-skin[data-dj-focus-dim][data-dj-scene="chat"]:has([data-composer-card]:focus-within) #dsh-jarvis-ambient .dj-bg-video {
+  opacity: calc(var(--dj-bg-opacity) * .62);
+}
+
+/* ============================================================================
+ * 7.5 Hero 身份层：Welcome home, Sir. + 反应堆环 + 工作区/模式玻璃 chip
+ * ----------------------------------------------------------------------------
+ * 宿主 hero 标题 "探索未至之境" 由 span 承载；这里把文字设为 0 号并用 ::after
+ * 画 JARVIS 台词，字号/行高与宿主标题对齐，不额外占行。环用 root 伪元素，
+ * 只画线，不参与布局。
+ * ========================================================================== */
+html.dj-skin [data-phase="hero"] [class*="titleGroup" i] > span:first-child { display: none !important; }
+html.dj-skin [data-phase="hero"] [class*="titleGroup" i] { overflow: visible !important; position: relative; }
+html.dj-skin [data-phase="hero"] [class*="titleGroup" i]::before {
+  content: "Welcome home, Sir.";
+  display: inline-block;
+  font: 600 30px/1.2 var(--sans);
+  letter-spacing: -.02em;
+  color: var(--dj-ink);
+  text-shadow: 0 2px 24px rgba(0, 0, 0, .62), 0 0 18px rgba(255, 196, 107, .10);
+  white-space: nowrap;
+}
+html.dj-skin [data-phase="hero"] [class*="titleGroup" i]::after {
+  content: "DEEPSEEK HARNESS // SYSTEM ONLINE";
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 4px);
+  transform: translateX(-50%);
+  font: 500 8.5px/1 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  letter-spacing: .26em;
+  color: rgba(255, 196, 107, .72);
+  white-space: nowrap;
+  pointer-events: none;
+}
+html.dj-skin [data-phase="hero"] [class*="previewBadge" i] { display: none !important; }
+html.dj-skin [data-phase="hero"] [class*="heroWorkspaceRow" i] button {
+  background: rgba(255, 255, 255, .035) !important;
+  border-radius: 999px !important;
+  color: var(--dj-ink-2) !important;
+  box-shadow: inset 0 0 0 1px var(--dj-line-2), inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+html.dj-skin [data-phase="hero"] [class*="heroWorkspaceRow" i] button:hover {
+  background: rgba(255, 196, 107, .08) !important;
+  color: var(--dj-ink) !important;
+}
+html.dj-skin [data-phase="hero"] [class*="heroWorkspaceRow" i] { justify-content: center; }
+html.dj-skin [data-phase="hero"] [class*="heroOptions" i] { margin-left: 0 !important; }
+html.dj-skin [data-phase="hero"] [class*="heroWorkspaceRow" i] button svg { color: var(--dj-gold) !important; opacity: .78; }
+html.dj-skin [data-phase="hero"] [class*="heroWorkspaceRow" i] button::before {
+  font: 500 8px/1 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  letter-spacing: .08em; color: rgba(255, 196, 107, .68); margin-right: 7px;
+}
+html.dj-skin [data-phase="hero"] [class*="heroWorkspaceRow" i] > button::before { content: "01"; }
+html.dj-skin [data-phase="hero"] [class*="heroWorkspaceRow" i] [class*="menuAnch" i] button::before { content: "02"; }
+html.dj-skin [data-phase="hero"] [class*="heroWorkspaceRow" i] [class*="menuAnch" i] { display: inline-flex; align-items: center; }
+/* 03 查看插件：真实按钮，和 01/02 同一套胶囊 */
+html.dj-skin .dj-hero-plugins {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+  padding: 0 8px;
+  margin-left: 8px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .035);
+  color: var(--dj-ink-2);
+  box-shadow: inset 0 0 0 1px var(--dj-line-2), inset 0 1px 0 rgba(255, 255, 255, .04);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+html.dj-skin .dj-hero-plugins:hover { background: rgba(255, 196, 107, .08); color: var(--dj-ink); }
+html.dj-skin .dj-hero-plugins-num {
+  font: 500 8px/1 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  letter-spacing: .08em;
+  color: rgba(255, 196, 107, .68);
+}
+html.dj-skin .dj-hero-plugins svg { width: 14px; height: 14px; flex: none; color: var(--dj-gold); opacity: .78; }
+html.dj-skin .dj-hero-plugins-chev { font-size: 12px; line-height: 1; color: var(--dj-ink-3); }
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) .dj-hero-plugins {
+  background: rgba(255, 255, 255, .58);
+  color: var(--dj-ink-2);
+  box-shadow: inset 0 0 0 1px rgba(10, 14, 20, .16), 0 4px 12px rgba(30, 40, 55, .06);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) .dj-hero-plugins-num { color: rgba(140, 82, 0, .95); }
+
+
+html.dj-skin [data-phase="hero"] [class*="heroWorkspaceRow" i] [class*="_root"] { color: var(--dj-ink-2); }
+html.dj-skin [data-phase="hero"]::before,
+html.dj-skin [data-phase="hero"]::after {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  border-radius: 50%;
+  pointer-events: none;
+  content: "";
+}
+html.dj-skin [data-phase="hero"]::before {
+  width: 560px;
+  height: 560px;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(255, 196, 107, .24);
+  box-shadow: inset 0 0 100px rgba(255, 196, 107, .045), 0 0 80px rgba(255, 59, 48, .055);
+  z-index: 0;
+}
+html.dj-skin [data-phase="hero"]::after {
+  width: 430px;
+  height: 430px;
+  transform: translate(-50%, -50%);
+  border: 1px dashed rgba(255, 196, 107, .20);
+  z-index: 0;
+}
+
+/* 浅色宿主：背景改为海报 + 白色遮罩，不把暗 HUD 硬铺在白底上 */
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) #dsh-jarvis-ambient .dj-bg-video { mix-blend-mode: luminosity; }
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) #dsh-jarvis-ambient .dj-bg-scrim {
+  background:
+    radial-gradient(ellipse 90% 80% at 52% 46%, rgba(238, 241, 244, .58) 0, rgba(238, 241, 244, .44) 55%, rgba(238, 241, 244, .20) 100%),
+    linear-gradient(180deg, rgba(238, 241, 244, .50) 0, rgba(238, 241, 244, .26) 22%, rgba(238, 241, 244, .38) 80%, rgba(238, 241, 244, .60) 100%);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) #dsh-jarvis-ambient .dj-bg-vignette { background: radial-gradient(120% 100% at 50% 50%, transparent 42%, rgba(255, 255, 255, .55) 100%); }
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) #dsh-jarvis-ambient .dj-bg-grain { mix-blend-mode: multiply; }
+
+/* ============================================================================
+ * 4. 四角枢轴 + 状态铭牌（#root 伪元素，不拦点击）
+ * ========================================================================== */
+html.dj-skin #root::before {
+  content: "";
+  position: fixed;
+  inset: 14px;
+  z-index: 5;
+  pointer-events: none;
+  opacity: var(--dj-corner);
+  background:
+    linear-gradient(var(--dj-gold), var(--dj-gold)) left top / 18px 1px no-repeat,
+    linear-gradient(var(--dj-gold), var(--dj-gold)) left top / 1px 18px no-repeat,
+    linear-gradient(var(--dj-gold), var(--dj-gold)) right top / 18px 1px no-repeat,
+    linear-gradient(var(--dj-gold), var(--dj-gold)) right top / 1px 18px no-repeat,
+    linear-gradient(var(--dj-gold), var(--dj-gold)) left bottom / 18px 1px no-repeat,
+    linear-gradient(var(--dj-gold), var(--dj-gold)) left bottom / 1px 18px no-repeat,
+    linear-gradient(var(--dj-gold), var(--dj-gold)) right bottom / 18px 1px no-repeat,
+    linear-gradient(var(--dj-gold), var(--dj-gold)) right bottom / 1px 18px no-repeat;
+}
+html.dj-skin #root::after {
+  content: attr(data-dj-status);
+  position: fixed;
+  right: 28px;
+  bottom: 16px;
+  z-index: 5;
+  pointer-events: none;
+  font: 500 8.5px/1.6 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  letter-spacing: .14em;
+  color: rgba(185, 194, 204, .36);
+  white-space: pre;
+}
+/* Windows 原生标题栏：左上/右上角标会压住侧栏品牌行与右侧面板开关（宿主把开关固定
+   到标题栏后，内容整体下移 40px，顶角标正好落在它们身上）→ 只保留底部两角 */
+html.dj-skin[data-windows-titlebar] #root::before {
+  inset: 0 14px 14px;
+  background:
+    linear-gradient(var(--dj-gold), var(--dj-gold)) left bottom / 18px 1px no-repeat,
+    linear-gradient(var(--dj-gold), var(--dj-gold)) left bottom / 1px 18px no-repeat,
+    linear-gradient(var(--dj-gold), var(--dj-gold)) right bottom / 18px 1px no-repeat,
+    linear-gradient(var(--dj-gold), var(--dj-gold)) right bottom / 1px 18px no-repeat;
+}
+html.dj-skin[data-windows-titlebar] #root::after { bottom: 16px; }
+
+/* ============================================================================
+ * 5. 侧栏（G1 玻璃）
+ * ========================================================================== */
+html.dj-skin [class*="sidebarCol" i] {
+  background:
+    radial-gradient(120% 46% at 0% 0%, rgba(255, 196, 107, .07), rgba(255, 196, 107, 0) 58%),
+    radial-gradient(80% 38% at 18% 100%, rgba(255, 59, 48, .045), rgba(255, 59, 48, 0) 62%),
+    linear-gradient(180deg, rgba(8, 10, 14, .88), rgba(6, 8, 11, .76)) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(120%);
+  backdrop-filter: blur(22px) saturate(120%);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, .06), inset -2px 0 12px rgba(255, 196, 107, .035), inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+/* Windows 原生标题栏：宿主把「收起/展开侧栏」按钮 position:fixed 到标题栏左上角。
+   本容器一旦带 backdrop-filter 就会成为该 fixed 按钮的包含块，把按钮整体下移 40px
+   正好压在品牌行上（图标叠在鲸标上）。该模式下 frame 自身已是不透明的
+   --dsw-specific-sidebar-fill，模糊没有视觉收益 → 关闭，让按钮回到标题栏。 */
+html.dj-skin[data-windows-titlebar] [class*="sidebarCol" i] {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+html.dj-skin [class*="sidebarCol" i] { position: relative; }
+html.dj-skin [class*="sidebarCol" i]::after {
+  content: "MK VII";
+  position: absolute;
+  top: 18px;
+  right: 54px;
+  z-index: 1;
+  pointer-events: none;
+  font: 500 8px/1 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  letter-spacing: .12em;
+  color: var(--dj-gold);
+  border: 1px solid rgba(255, 196, 107, .28);
+  background: rgba(8, 10, 14, .55);
+  padding: 2px 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+html.dj-skin [data-sidebar-collapsed] [class*="sidebarCol" i]::after { display: none; }
+html.dj-skin [class*="sidebarCol" i]::after { display: none; }
+html.dj-skin[data-dj-sidebar-wide] [class*="sidebarCol" i]::after { display: block; }
+html.dj-skin [class*="sidebarCol" i] button { color: var(--dj-ink-2); }
+html.dj-skin:not(:has([data-sidebar-collapsed])) [class*="sidebarCol" i] > [class*="root" i],
+html.dj-skin:not(:has([data-sidebar-collapsed])) [class*="sidebarCol" i] [class*="logoRow" i] {
+  width: 100% !important;
+  max-width: none !important;
+}
+html.dj-skin:has([data-sidebar-collapsed]) [class*="sidebarCol" i] [class*="newSessionRow" i] { display: none !important; }
+/* 侧栏宽度交给宿主 grid/drag；内层只跟随真实列宽 */
+html.dj-skin [class*="sidebarCol" i] [class*="newSessionRow" i] {
+  width: calc(var(--dj-sidebar-w, 280px) - 36px) !important;
+  margin: 0 18px 14px 10px !important;
+  display: flex !important;
+}
+html.dj-skin [class*="sidebarCol" i] button[class*="newSession" i] {
+  position: relative;
+  width: 100% !important;
+  height: 38px !important;
+  padding: 0 14px 0 38px !important;
+  justify-content: flex-start !important;
+  background: linear-gradient(180deg, rgba(255, 196, 107, .12), rgba(255, 196, 107, .05)) !important;
+  background-color: transparent !important;
+  color: var(--dj-gold-hi) !important;
+  border: 1px solid rgba(255, 196, 107, .24) !important;
+  border-radius: 10px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 8px 20px rgba(0, 0, 0, .18) !important;
+}
+html.dj-skin [class*="sidebarCol" i] button[class*="newSession" i]:hover { filter: brightness(1.08); }
+html.dj-skin [class*="sidebarCol" i] [class*="newSessionShortcut" i] { display: none !important; }
+html.dj-skin [class*="sidebarCol" i] [class*="newSessionContent" i] > svg { display: none !important; }
+html.dj-skin [class*="sidebarCol" i] button[class*="newSession" i]::before {
+  content: "";
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 196, 107, .50);
+  background: radial-gradient(circle at 34% 28%, rgba(255, 216, 154, .34), rgba(255, 196, 107, .08) 58%, rgba(8, 10, 14, .18));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, .22), inset 0 -2px 4px rgba(0, 0, 0, .28), 0 0 10px rgba(255, 196, 107, .14);
+  pointer-events: none;
+}
+html.dj-skin [class*="sidebarCol" i] button[class*="newSession" i]::after {
+  content: "+";
+  position: absolute;
+  left: 22px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font: 500 13px/1 var(--sans);
+  line-height: 1;
+  padding-bottom: 1px;
+  color: var(--dj-gold-hi);
+  pointer-events: none;
+}
+html.dj-skin [class*="sidebarCol" i] button[class*="newSession" i]:hover::before {
+  border-color: rgba(255, 196, 107, .78);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, .28), inset 0 -2px 4px rgba(0, 0, 0, .28), 0 0 16px rgba(255, 196, 107, .35);
+}
+html.dj-skin [class*="sidebarCol" i] [class*="newSessionLabelMask" i] { overflow: visible !important; }
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [class*="sidebarCol" i] button[class*="newSession" i]::before {
+  border-color: rgba(169, 102, 0, .38);
+  background: radial-gradient(circle at 34% 28%, #ffffff, #f4e8d2 58%, #e6d5b6);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, .95), inset 0 -2px 4px rgba(120, 80, 20, .12), 0 0 10px rgba(169, 102, 0, .12);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [class*="sidebarCol" i] button[class*="newSession" i]::after { color: #8a5200; }
+html.dj-skin [class*="sidebarCol" i] button[data-sidebar-toggle] {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  color: var(--dj-ink-3) !important;
+  border-radius: 8px;
+  transition: color 160ms ease-out, background-color 160ms ease-out;
+}
+html.dj-skin [class*="sidebarCol" i] button[data-sidebar-toggle]:hover {
+  color: var(--dj-gold) !important;
+  background: rgba(255, 196, 107, .08) !important;
+}
+html.dj-skin [class*="sidebarCol" i] [class*="nav" i] [class*="item" i] { min-height: 36px; }
+html.dj-skin [class*="sidebarCol" i] [class*="brand" i] { color: var(--dj-ink) !important; }
+html.dj-skin [class*="sidebarCol" i] [class*="brand" i] * { color: var(--dj-ink) !important; }
+
+html.dj-skin [class*="sidebarCol" i] [class*="panelRow" i]:hover { background: rgba(255, 255, 255, .035) !important; color: var(--dj-ink) !important; }
+html.dj-skin [class*="sidebarCol" i] button:hover { color: var(--dj-ink); }
+html.dj-skin [class*="sidebarCol" i] [role="treeitem"] {
+  border-radius: 7px;
+  color: var(--dj-ink-2);
+  transition: background-color 160ms ease-out, color 160ms ease-out;
+}
+html.dj-skin [class*="sidebarCol" i] [role="treeitem"]:hover { background: rgba(255, 255, 255, .035); }
+html.dj-skin [class*="sidebarCol" i] [role="treeitem"][aria-selected="true"] {
+  background: linear-gradient(90deg, rgba(255, 196, 107, .11), rgba(255, 196, 107, .035));
+  color: var(--dj-ink);
+  box-shadow: inset 2px 0 0 var(--dj-gold), 0 0 14px rgba(255, 196, 107, .04);
+}
+html.dj-skin [class*="sidebarCol" i] [role="treeitem"][aria-selected="true"] .dot,
+html.dj-skin [class*="sidebarCol" i] [role="treeitem"][aria-selected="true"] [class*="dot" i] {
+  background: var(--dj-gold);
+  box-shadow: 0 0 8px rgba(255, 196, 107, .7);
+}
+html.dj-skin [class*="sidebarCol" i] ::selection { background: rgba(255, 196, 107, .30); color: #0b0e12; }
+html.dj-skin [class*="sidebarCol" i] [class*="brand" i] svg,
+html.dj-skin [class*="sidebarCol" i] [class*="brand" i] img { filter: drop-shadow(0 0 10px rgba(255, 196, 107, .18)); }
+html.dj-skin [class*="sidebarCol" i] svg { color: var(--dj-ink-3); }
+
+/* ============================================================================
+ * 6. 顶栏 / tab
+ * ========================================================================== */
+html.dj-skin header[data-window-drag] {
+  background: transparent !important;
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .07), inset 0 -2px 0 rgba(255, 196, 107, .10);
+}
+html.dj-skin header[data-window-drag]::after {
+  content: attr(data-dj-model);
+  position: absolute;
+  /* 会话页顶栏右侧有「更多操作」+「打开右侧边栏」两个 28px 按钮（右内缩 12 + 8 间距），
+     铭牌右缩 92px 才不会被「更多操作」压住（旧值 56px 会重叠 20px） */
+  right: 92px;
+  top: 16px;
+  font: 500 9px/1 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  letter-spacing: .14em;
+  color: rgba(255, 196, 107, .62);
+  pointer-events: none;
+}
+html.dj-skin header[data-window-drag] { position: relative; }
+html.dj-skin [role="tablist"] [role="tab"] { color: var(--dj-ink-3); }
+html.dj-skin [role="tablist"] [role="tab"]:hover { color: var(--dj-ink-2); }
+html.dj-skin [role="tablist"] [role="tab"][aria-selected="true"] {
+  color: var(--dj-ink);
+  box-shadow: inset 0 -2px 0 var(--dj-gold);
+}
+html.dj-skin [role="tablist"] [role="tab"][aria-selected="true"]::after { box-shadow: 0 0 10px rgba(255, 196, 107, .45); }
+
+/* Hero 顶栏：概念稿的标题/对话-轨迹-变更/模型铭牌；fixed 装饰层，不拦点击 */
+#dj-hero-head {
+  position: fixed;
+  left: var(--dj-sidebar-w, 345px);
+  right: 0;
+  top: 0;
+  height: 76px;
+  z-index: 6;
+  display: flex;
+  align-items: flex-end;
+  gap: 26px;
+  padding: 10px 56px 0 28px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 320ms ease-out, transform 320ms cubic-bezier(.16, 1, .3, 1);
+  background: linear-gradient(180deg, rgba(5, 6, 8, .93), rgba(5, 6, 8, .55) 70%, rgba(5, 6, 8, .22));
+  border-bottom: 1px solid rgba(255, 255, 255, .07);
+  box-shadow: inset 0 -1px 0 rgba(255, 196, 107, .10);
+}
+html.dj-skin[data-dj-scene="hero"] #dj-hero-head { opacity: 1; transform: translateY(0); }
+html.dj-skin[data-windows-titlebar] #dj-hero-head { top: var(--dsh-windows-titlebar-height, 40px); }
+html.dj-skin[data-dj-scene="hero"] header[data-window-drag]::before,
+html.dj-skin[data-dj-scene="hero"] header[data-window-drag]::after { display: none !important; }
+#dj-hero-head .dj-head-main { display: flex; flex-direction: column; gap: 4px; padding-bottom: 8px; }
+#dj-hero-head .dj-head-kicker {
+  font: 500 8px/1 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  letter-spacing: .22em; color: rgba(255, 196, 107, .62);
+}
+#dj-hero-head .dj-head-title { font: 550 13px/1.2 var(--sans); color: var(--dj-ink); letter-spacing: .01em; }
+#dj-hero-head .dj-head-tabs { display: flex; gap: 22px; margin-top: 2px; }
+#dj-hero-head .dj-head-tabs span {
+  position: relative; font-size: 13px; color: var(--dj-ink-3); padding-bottom: 8px;
+}
+#dj-hero-head .dj-head-tabs span.on { color: var(--dj-ink); }
+#dj-hero-head .dj-head-tabs span.on::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+  background: var(--dj-gold); border-radius: 2px; box-shadow: 0 0 10px rgba(255, 196, 107, .5);
+}
+#dj-hero-head .dj-head-model {
+  margin-left: auto; padding-bottom: 10px;
+  font: 500 9px/1 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  letter-spacing: .12em; color: rgba(255, 196, 107, .62);
+}
+@media (max-width: 1024px) { #dj-hero-head { display: none; } }
+
+/* Hero 底部输入卡：用户已拍板“概念=实际”，这是唯一的 hero 布局破例（聊天/任务不动） */
+html.dj-skin [data-phase="hero"] [data-conversation-scroll] { position: relative; }
+html.dj-skin [data-phase="hero"] [class*="GRgSLq_root"] {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  width: min(860px, calc(100% - 64px));
+  z-index: 10;
+}
+html.dj-skin [data-phase="hero"] [class*="GRgSLq_root"] [data-composer-card] { max-width: none; }
+html.dj-skin [data-phase="hero"] [class*="WOwLGG_root"] { transform: translateY(-38px); }
+html.dj-skin [data-phase="hero"] [class*="heroWorkspaceRow" i] { transform: translateY(-38px); }
+
+/* Hero 顶栏 HUD 铭牌（宿主 hero header 为空，补一条 JARVIS 识别） */
+html.dj-skin [data-phase="hero"] header[data-window-drag]::before {
+  content: "J.A.R.V.I.S. // OPERATIONS";
+  position: absolute;
+  left: 22px;
+  top: 15px;
+  font: 500 8.5px/1 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  letter-spacing: .22em;
+  color: rgba(255, 196, 107, .62);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* 底部战情台与概念稿的底部输入卡冲突，hero 隐藏；聊天/任务不影响 */
+#dj-hero-deck { display: none !important; }
+
+/* ============================================================================
+ * 7. 会话 / 消息
+ * ========================================================================== */
+/* G5 用户气泡：呼吸 + 流光（①1px conic 金/红边环 12s 旋转 + 6.4s 呼吸；②外侧柔光 + 7s 斜向高光扫过）
+   只加伪元素层，不改盒模型/布局；动效只跑 opacity / --dj-ring-angle / background-position，不碰 height/margin。
+   性能：skin.js 用 IntersectionObserver 给视口外的气泡打 data-dj-bubble-off → 暂停动画。 */
+html.dj-skin [data-message-bubble] {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(180deg, rgba(255, 196, 107, .13), rgba(255, 196, 107, .07)) !important;
+  border-radius: 20px 20px 6px 20px !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 196, 107, .22), inset 0 1px 0 rgba(255, 255, 255, .07), 0 12px 30px rgba(0, 0, 0, .22);
+}
+html.dj-skin [data-message-bubble]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  opacity: var(--dj-ring-a, .72);
+  background: conic-gradient(from var(--dj-ring-angle),
+    rgba(255, 226, 170, 1) 0deg,
+    rgba(255, 196, 107, .60) 9deg,
+    rgba(255, 196, 107, .07) 32deg,
+    rgba(255, 196, 107, .05) 142deg,
+    rgba(255, 59, 48, .66) 165deg,
+    rgba(255, 59, 48, .52) 178deg,
+    rgba(255, 59, 48, .07) 200deg,
+    rgba(255, 196, 107, .05) 222deg,
+    rgba(255, 226, 170, 1) 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: dj-ring-spin 12s linear infinite, dj-bubble-ring-breathe 6.4s ease-in-out infinite alternate;
+}
+html.dj-skin [data-message-bubble]::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image:
+    linear-gradient(105deg, transparent 40%, rgba(255, 240, 205, .16) 50%, transparent 60%),
+    radial-gradient(120% 150% at 50% 0%, rgba(255, 196, 107, .26), rgba(255, 196, 107, 0) 64%);
+  background-repeat: no-repeat;
+  background-size: 64% 100%, 100% 100%;
+  background-position: -80% 0, 0 0;
+  box-shadow: 0 0 20px rgba(255, 196, 107, .10);
+  opacity: .55;
+  animation: dj-bubble-glow 6.4s ease-in-out infinite alternate, dj-bubble-sweep 7s linear infinite;
+}
+@keyframes dj-bubble-ring-breathe { from { opacity: .30; } to { opacity: 1; } }
+@keyframes dj-bubble-glow { from { opacity: .22; } to { opacity: .85; } }
+@keyframes dj-bubble-sweep {
+  from { background-position: -80% 0, 0 0; }
+  to { background-position: 180% 0, 0 0; }
+}
+/* 视口外的气泡暂停动画（skin.js 标记） */
+html.dj-skin [data-message-bubble][data-dj-bubble-off]::before,
+html.dj-skin [data-message-bubble][data-dj-bubble-off]::after { animation-play-state: paused; }
+/* 动效档位：reduced → 静态金边；off → 全停 */
+html.dj-skin--motion-reduced [data-message-bubble]::before { animation: none; opacity: .55; }
+html.dj-skin--motion-reduced [data-message-bubble]::after { animation: none; opacity: .38; }
+html.dj-skin--motion-off [data-message-bubble]::before { animation: none !important; opacity: .55; }
+html.dj-skin--motion-off [data-message-bubble]::after { animation: none !important; display: none; }
+@media (prefers-reduced-motion: reduce) {
+  /* 皮肤自己的 motion=full 是用户显式选择，优先于系统“减少动画”偏好（本机 Windows 动画常被关） */
+  html.dj-skin:not(.dj-skin--motion-full) [data-message-bubble]::before { animation: none; opacity: .55; }
+  html.dj-skin:not(.dj-skin--motion-full) [data-message-bubble]::after { animation: none; opacity: .38; }
+}
+html.dj-skin [data-message-bubble] * { color: var(--dj-ink); }
+html.dj-skin [data-chat-flow] a,
+html.dj-skin [data-chat-flow] .md-code-block a { color: var(--dj-gold); }
+html.dj-skin [data-chat-flow] :not(pre) > code {
+  background: rgba(255, 255, 255, .06);
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px var(--dj-line-2);
+  color: var(--dj-gold-hi);
+}
+html.dj-skin .md-code-block {
+  background: #07090c !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 0 0 1px var(--dj-line-1), inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+html.dj-skin [data-code-block-banner] {
+  background: rgba(255, 255, 255, .025) !important;
+  box-shadow: inset 0 -1px 0 var(--dj-line-1);
+  color: var(--dj-ink-3) !important;
+}
+html.dj-skin [data-code-block-banner] button:hover { color: var(--dj-gold) !important; }
+html.dj-skin [data-chat-flow] blockquote {
+  border-left: 2px solid var(--dj-gold) !important;
+  background: rgba(255, 196, 107, .035);
+  padding-left: 14px;
+}
+html.dj-skin [data-chat-flow] table th {
+  background: rgba(255, 255, 255, .03);
+  border-bottom-color: var(--dj-line-2) !important;
+}
+html.dj-skin [data-chat-flow] table td { border-bottom-color: var(--dj-line-1) !important; }
+html.dj-skin [data-chat-flow] table tr:hover td { background: rgba(255, 255, 255, .018); }
+html.dj-skin [data-chat-flow] hr { background: var(--dj-line-2) !important; }
+html.dj-skin [data-chat-flow] li::marker { color: rgba(255, 196, 107, .72); }
+html.dj-skin [data-chat-flow] h1,
+html.dj-skin [data-chat-flow] h2 { position: relative; }
+html.dj-skin [data-chat-flow] h1::before,
+html.dj-skin [data-chat-flow] h2::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: .35em;
+  bottom: .35em;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--dj-gold), rgba(255, 196, 107, .08));
+}
+html.dj-skin [data-chat-running] {
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(255, 196, 107, .07), transparent 65%);
+  box-shadow: inset 0 0 0 1px rgba(255, 196, 107, .20), inset 0 1px 0 rgba(255, 255, 255, .05);
+  position: relative;
+  overflow: hidden;
+}
+html.dj-skin [data-chat-running]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 196, 107, .12) 48%, transparent 76%);
+  transform: translateX(-100%);
+  animation: dj-scan 2.8s linear infinite;
+}
+html.dj-skin [data-chat-running] { color: var(--dj-gold-hi); }
+html.dj-skin [data-turn-tail] { color: var(--dj-ink-3); }
+html.dj-skin [data-turn-tail] button:hover { color: var(--dj-gold); }
+html.dj-skin [data-chat-flow-kind="tool-call"] [class*="_root"] {
+  border-radius: 12px;
+}
+
+/* 过程组外壳：把工具行收进一张玻璃卡（不改变内部行距） */
+html.dj-skin [data-turn-process] {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .018);
+  box-shadow: inset 0 0 0 1px var(--dj-line-1), inset 0 1px 0 rgba(255, 255, 255, .035);
+}
+html.dj-skin [data-turn-process] [data-process-activity] { color: var(--dj-ink-2); }
+html.dj-skin [data-turn-process] [data-process-activity]:hover { color: var(--dj-ink); }
+html.dj-skin [data-turn-process] [data-step-process-icon] svg { color: var(--dj-gold); opacity: .78; }
+
+/* 上下文注入 / 思考行：概念稿的 HUD 小条 */
+html.dj-skin [data-chat-flow-kind="context"] {
+  border-radius: 7px;
+  background: rgba(255, 255, 255, .018);
+  box-shadow: inset 0 0 0 1px var(--dj-line-1);
+  color: var(--dj-ink-3);
+}
+html.dj-skin [data-chat-flow-kind="context"] svg { color: var(--dj-cyan); opacity: .55; }
+html.dj-skin [data-chat-flow-kind="assistant-step"] { color: var(--dj-ink-3); }
+html.dj-skin [data-chat-flow-kind="assistant-step"] svg { color: var(--dj-gold); opacity: .65; }
+
+/* 新消息入场：只对 observer 标记的新行生效 */
+html.dj-skin [data-dj-enter] { animation: dj-row-in 240ms cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes dj-row-in {
+  from { opacity: 0; transform: translate3d(0, 6px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.dj-skin:not(.dj-skin--motion-full) [data-dj-enter] { animation: dj-row-fade 120ms ease-out both; }
+  @keyframes dj-row-fade { from { opacity: 0; } to { opacity: 1; } }
+}
+
+/* 自定义 pwsh 大卡：tool.call.toolview key=pwsh */
+html.dj-skin .dj-tcard {
+  margin: 2px 0 8px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .035), rgba(255, 255, 255, .012));
+  box-shadow: inset 0 0 0 1px var(--dj-line-2), inset 2px 0 0 rgba(255, 196, 107, .55), 0 14px 30px rgba(0, 0, 0, .28);
+  overflow: hidden;
+}
+html.dj-skin .dj-tcard-head {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--dj-line-1);
+  background: rgba(255, 255, 255, .018);
+}
+html.dj-skin .dj-tcard-ic {
+  font: 600 9px/1 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  letter-spacing: .04em; color: var(--dj-gold); opacity: .9;
+}
+html.dj-skin .dj-tcard-name {
+  font: 600 10.5px/1 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  letter-spacing: .06em; color: var(--dj-ink);
+}
+html.dj-skin .dj-tcard-sum {
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font: 400 10.5px/1.3 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color: var(--dj-ink-3);
+}
+html.dj-skin .dj-tcard-st {
+  flex: none; font: 500 8px/1 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  letter-spacing: .14em; color: var(--dj-ink-4);
+}
+html.dj-skin .dj-tcard[data-dj-state="done"] .dj-tcard-st { color: var(--dj-green); }
+html.dj-skin .dj-tcard[data-dj-state="running"] .dj-tcard-st { color: var(--dj-gold); }
+html.dj-skin .dj-tcard[data-dj-state="error"] .dj-tcard-st { color: var(--dj-crimson); }
+html.dj-skin .dj-tcard-body { padding: 8px 12px; background: rgba(0, 0, 0, .18); }
+html.dj-skin .dj-tcard-cmd {
+  display: block; font: 400 10.5px/1.7 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color: var(--dj-gold-hi); white-space: pre-wrap; word-break: break-word;
+}
+html.dj-skin .dj-tcard-out {
+  margin: 0; padding: 8px 12px; max-height: 170px; overflow: auto;
+  font: 400 10px/1.7 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color: #aab4be; background: rgba(0, 0, 0, .22); white-space: pre-wrap; word-break: break-word;
+}
+html.dj-skin [data-chat-call-id]:has(.dj-tcard) { background: transparent; box-shadow: none; }
+/* 概念稿的工具卡是正文大卡：强制展开过程组、隐藏“已完成/过程”折叠头 */
+html.dj-skin [data-step-process-body] { max-height: none !important; overflow: visible !important; }
+html.dj-skin [data-process-activity] { display: none !important; }
+html.dj-skin [data-turn-process] { display: none !important; }
+
+/* 工具调用行：DSH 是 24px 高的 disclosure 行，不重排；只加玻璃条 + 金左缘 */
+html.dj-skin [data-chat-call-id] {
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, .026), rgba(255, 255, 255, .010));
+  box-shadow: inset 2px 0 0 rgba(255, 196, 107, .30), inset 0 0 0 1px var(--dj-line-1);
+  transition: background 160ms ease-out, box-shadow 160ms ease-out;
+}
+html.dj-skin [data-chat-call-id]:hover {
+  background: linear-gradient(90deg, rgba(255, 196, 107, .06), rgba(255, 255, 255, .014));
+  box-shadow: inset 2px 0 0 rgba(255, 196, 107, .70), inset 0 0 0 1px rgba(255, 196, 107, .18);
+}
+html.dj-skin [data-chat-call-id] svg { color: var(--dj-gold); opacity: .82; }
+html.dj-skin [data-chat-call-id] [class*="_row_"] { color: var(--dj-ink-2); }
+html.dj-skin [data-chat-call-id] [class*="_row_"]:hover { color: var(--dj-ink); }
+html.dj-skin [data-tool][data-state="running"] {
+  box-shadow: inset 2px 0 0 var(--dj-gold), inset 0 0 0 1px rgba(255, 196, 107, .25) !important;
+}
+html.dj-skin [data-tool][data-state="error"] {
+  box-shadow: inset 2px 0 0 var(--dj-crimson), inset 0 0 0 1px rgba(255, 59, 48, .24) !important;
+}
+html.dj-skin [data-chat-flow-kind="tool-call"] [class*="_body_"] {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, .18);
+  box-shadow: inset 0 0 0 1px var(--dj-line-1);
+}
+
+/* Hero 底部战情台：只读 HUD 数据，fixed 不参与布局；仅 hero 显示 */
+#dj-hero-deck {
+  position: fixed;
+  left: calc(var(--dj-sidebar-w, 280px) + 32px);
+  right: 32px;
+  bottom: 42px;
+  height: 48px;
+  z-index: 4;
+  display: flex;
+  align-items: stretch;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 320ms ease-out, transform 320ms cubic-bezier(.16, 1, .3, 1);
+  background: linear-gradient(90deg, rgba(8, 10, 14, .72), rgba(8, 10, 14, .18));
+  border-top: 1px solid rgba(255, 196, 107, .16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .035);
+}
+html.dj-skin[data-dj-scene="hero"] #dj-hero-deck { opacity: 1; transform: translateY(0); }
+#dj-hero-deck .dj-deck-cell {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 16px;
+  border-left: 1px solid rgba(255, 255, 255, .055);
+}
+#dj-hero-deck .dj-deck-cell:first-child { border-left: 0; padding-left: 20px; }
+#dj-hero-deck .dj-deck-cell.is-live { flex: 0 0 120px; }
+#dj-hero-deck .dj-deck-k {
+  font: 500 7.5px/1 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  letter-spacing: .20em;
+  color: rgba(255, 196, 107, .55);
+}
+#dj-hero-deck .dj-deck-v {
+  font: 500 9.5px/1.3 ui-monospace, "Cascadia Mono", Consolas, monospace;
+  letter-spacing: .10em;
+  color: var(--dj-ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#dj-hero-deck .dj-deck-cell.is-live .dj-deck-v { color: var(--dj-gold-hi); }
+#dj-hero-deck .dj-deck-cell.is-live .dj-deck-v::before {
+  content: "";
+  display: inline-block;
+  width: 5px; height: 5px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--dj-gold);
+  box-shadow: 0 0 8px rgba(255, 196, 107, .8);
+  vertical-align: 1px;
+}
+@media (max-width: 1024px) { #dj-hero-deck { display: none; } }
+html.dj-skin--motion-off #dj-hero-deck { transition: none; }
+
+/* ============================================================================
+ * 8. 输入区（G2 玻璃 + 反应堆金环）
+ * ========================================================================== */
+html.dj-skin [data-composer-card] {
+  background: linear-gradient(180deg, rgba(14, 17, 22, .90), rgba(9, 11, 15, .95)) !important;
+  box-shadow: var(--dj-shadow-composer), inset 0 1px 0 rgba(255, 255, 255, .08), 0 0 0 1px rgba(255, 196, 107, .05) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(130%);
+  backdrop-filter: blur(26px) saturate(130%);
+  border-radius: var(--dsw-radius-panel) !important;
+}
+html.dj-skin [data-composer-card]::before {
+  content: "";
+  position: absolute;
+  inset: -1.6px;
+  z-index: 0;
+  border-radius: calc(var(--dsw-radius-panel) + 1.6px);
+  padding: 1.6px;
+  pointer-events: none;
+  opacity: var(--dj-ring-a);
+  background: conic-gradient(from var(--dj-ring-angle),
+    rgba(255, 196, 107, .92) 0deg,
+    rgba(255, 196, 107, .18) 34deg,
+    rgba(255, 196, 107, .10) 150deg,
+    rgba(255, 59, 48, .60) 166deg,
+    rgba(255, 59, 48, .16) 198deg,
+    rgba(255, 196, 107, .08) 208deg,
+    rgba(255, 196, 107, .92) 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: dj-ring-spin 12s linear infinite, dj-ring-breathe 6.4s ease-in-out infinite alternate;
+}
+html.dj-skin [data-composer-card]::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  z-index: 0;
+  border-radius: calc(var(--dsw-radius-panel) + 5px);
+  pointer-events: none;
+  opacity: .28;
+  background: conic-gradient(from var(--dj-ring-angle),
+    rgba(255, 196, 107, .55) 0deg,
+    transparent 58deg 150deg,
+    rgba(255, 59, 48, .32) 166deg 198deg,
+    transparent 220deg 360deg);
+  filter: blur(7px);
+  animation: dj-ring-spin 15s linear infinite reverse, dj-ring-breathe 6.4s ease-in-out infinite alternate;
+}
+html.dj-skin:has([data-composer-card]:focus-within) [data-composer-card]::before {
+  opacity: 1;
+  animation-duration: 6s, 6.4s;
+}
+html.dj-skin:has([data-composer-card]:focus-within) [data-composer-card]::after {
+  opacity: .50;
+  animation-duration: 7.2s, 6.4s;
+}
+html.dj-skin[data-dj-streaming] [data-composer-card]::before {
+  background: conic-gradient(from var(--dj-ring-angle),
+    rgba(255, 59, 48, .88) 0deg,
+    rgba(255, 59, 48, .18) 40deg,
+    rgba(255, 196, 107, .10) 150deg,
+    rgba(255, 196, 107, .52) 166deg,
+    rgba(255, 196, 107, .12) 200deg,
+    rgba(255, 59, 48, .08) 220deg,
+    rgba(255, 59, 48, .88) 360deg);
+}
+html.dj-skin [data-composer-card] [data-composer-input] { caret-color: var(--dj-gold); }
+html.dj-skin [data-composer-card] ::placeholder { color: rgba(255, 255, 255, .30); }
+html.dj-skin [data-composer-card] button[class*="_primary"] {
+  background: linear-gradient(180deg, var(--dj-gold-hi), #e9a13b) !important;
+  color: #1a1206 !important;
+  box-shadow: 0 0 20px rgba(255, 196, 107, .26), inset 0 1px 0 rgba(255, 255, 255, .5) !important;
+}
+html.dj-skin [data-composer-card] button[class*="_primary"]:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+html.dj-skin [data-composer-card] button:not([class*="_primary"]):hover { color: var(--dj-gold); }
+
+/* ============================================================================
+ * 9. 菜单 / 弹层 / 对话框
+ * ========================================================================== */
+html.dj-skin [role="menu"],
+html.dj-skin [data-menu-material] {
+  box-shadow: inset 0 0 0 1px var(--dj-line-2), 0 18px 50px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+html.dj-skin [role="menu"] [role="menuitem"]:hover { background: rgba(255, 196, 107, .08); }
+html.dj-skin [role="dialog"] {
+  background: rgba(10, 12, 16, .94) !important;
+  box-shadow: inset 0 0 0 1px var(--dj-line-3), 0 40px 100px rgba(0, 0, 0, .65), inset 0 1px 0 rgba(255, 255, 255, .06) !important;
+}
+html.dj-skin [class*="_mask" i] { background-color: rgba(0, 0, 0, .55) !important; }
+html.dj-skin [role="dialog"] h2,
+html.dj-skin [role="dialog"] h3 { position: relative; }
+html.dj-skin [role="dialog"] h2::before,
+html.dj-skin [role="dialog"] h3::before {
+  content: "";
+  position: absolute;
+  left: -10px;
+  top: .25em;
+  bottom: .25em;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--dj-gold);
+}
+
+/* ============================================================================
+ * 10. 滚动条 / 选区 / 焦点
+ * ========================================================================== */
+html.dj-skin ::selection { background: rgba(255, 196, 107, .30); color: #0b0e12; }
+html.dj-skin :focus-visible { outline-color: var(--dj-gold) !important; }
+
+/* ============================================================================
+ * 11. 交接分区显影（splash 交接时给 html 加 .dj-enter，1.5s 后移除）
+ * ========================================================================== */
+html.dj-enter #dsh-jarvis-ambient { animation: dj-ambient-in 900ms cubic-bezier(.16, 1, .3, 1) both; }
+html.dj-enter [class*="sidebarCol" i] { animation: dj-enter-left 420ms cubic-bezier(.16, 1, .3, 1) both; }
+html.dj-enter header[data-window-drag] { animation: dj-enter-top 360ms cubic-bezier(.16, 1, .3, 1) 60ms both; }
+html.dj-enter [data-composer-seat] { animation: dj-enter-composer 520ms cubic-bezier(.16, 1, .3, 1) 220ms both; }
+/* 四角枢轴第 5 个分区：交接时最后淡入（600ms / 延迟 380ms） */
+html.dj-enter #root::before { animation: dj-enter-corners 600ms ease-out 380ms both; }
+html.dj-enter #root::after { animation: dj-enter-status 500ms ease-out 480ms both; }
+@keyframes dj-enter-corners { from { opacity: 0; } to { opacity: var(--dj-corner); } }
+@keyframes dj-enter-status { from { opacity: 0; } to { opacity: 1; } }
+@keyframes dj-ambient-in {
+  0% { opacity: 0; transform: scale(1.035); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes dj-enter-left {
+  0% { opacity: 0; transform: translate3d(-8px, 0, 0); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes dj-enter-top {
+  0% { opacity: 0; transform: translate3d(0, -4px, 0); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes dj-enter-composer {
+  0% { opacity: 0; transform: translate3d(0, 10px, 0) scale(.996); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes dj-ring-spin { to { --dj-ring-angle: 378deg; } }
+@keyframes dj-ring-breathe { from { opacity: .50; } to { opacity: 1; } }
+@keyframes dj-scan { to { transform: translateX(100%); } }
+
+/* ============================================================================
+ * 12. 动效降级
+ * ========================================================================== */
+html.dj-skin--motion-reduced [data-composer-card]::before,
+html.dj-skin--motion-reduced [data-composer-card]::after,
+html.dj-skin--motion-reduced [data-chat-running]::after {
+  animation: none !important;
+}
+html.dj-skin--motion-reduced [data-composer-card]::before { opacity: .55; }
+html.dj-skin--motion-reduced [data-composer-card]::after { display: none; }
+html.dj-skin--motion-off #dsh-jarvis-ambient .dj-bg-scan { display: none; }
+html.dj-skin--motion-off [data-composer-card]::before,
+html.dj-skin--motion-off [data-composer-card]::after,
+html.dj-skin--motion-off [data-chat-running]::after { animation: none !important; }
+html.dj-skin--motion-off [data-composer-card]::after { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  /* 只在用户没有显式选择 motion=full 时才降级（与 skin.motion 档位一致） */
+  html.dj-skin:not(.dj-skin--motion-full) #dsh-jarvis-ambient .dj-bg-scan { display: none; }
+  html.dj-skin:not(.dj-skin--motion-full) [data-composer-card]::before,
+  html.dj-skin:not(.dj-skin--motion-full) [data-composer-card]::after,
+  html.dj-skin:not(.dj-skin--motion-full) [data-chat-running]::after { animation: none !important; }
+  html.dj-skin:not(.dj-skin--motion-full) [data-composer-card]::after { display: none; }
+  html.dj-skin.dj-enter:not(.dj-skin--motion-full) #dsh-jarvis-ambient,
+  html.dj-skin.dj-enter:not(.dj-skin--motion-full) [class*="sidebarCol" i],
+  html.dj-skin.dj-enter:not(.dj-skin--motion-full) header[data-window-drag],
+  html.dj-skin.dj-enter:not(.dj-skin--motion-full) [data-composer-seat] { animation-duration: 200ms !important; animation-name: dj-fade-in !important; }
+  html.dj-skin.dj-enter:not(.dj-skin--motion-full) #root::before,
+  html.dj-skin.dj-enter:not(.dj-skin--motion-full) #root::after { animation: none !important; }
+  @keyframes dj-fade-in { from { opacity: 0; } to { opacity: 1; } }
+}
+@media (prefers-reduced-transparency: reduce) {
+  html.dj-skin [class*="sidebarCol" i] {
+    background: #07090c !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  html.dj-skin [data-composer-card] {
+    background: #0a0d11 !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* ============================================================================
+ * 13. 启动期：只隐藏 UI，不隐藏背景层（splash.css 的 body 规则在本文件前面）
+ * ========================================================================== */
+html.dj-skin.dj-booting #root { visibility: hidden; }
+
+/* 收起态不再自绘「重开侧栏」按钮（0.3.5 的 #dj-sidebar-reopen 已删）：
+ *   - Windows 标题栏模式：宿主把开关固定在标题栏 (12,6)，自绘按钮会与它叠在同一位置；
+ *   - Web 收起轨道：宿主自带 36px 开关（悬停显示面板图标），自绘按钮会盖在它上面。
+ * 自绘按钮在展开态还压在品牌行/标题行上，属「交互元素与视图元素重叠」，故整体移除。 */
+
+/* ============================================================================
+ * 17. 浅色“昼面”完整覆盖（host body 无 data-ds-dark-theme 时）
+ *     host 的浅色 token 只解决 --dsw；这里补 --dj 私有 token 与硬编码暗面。
+ * ========================================================================== */
+html.dj-skin:not([data-dj-light="off"]):has(body:not([data-ds-dark-theme])) { background: #e9edf1; }
+
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) {
+  --dj-void: #e9edf1;
+  --dj-base: #eef2f6;
+  --dj-panel-1: #f7f9fb;
+  --dj-panel-2: #ffffff;
+  --dj-ink: #10151b;
+  --dj-ink-2: #2c3742;
+  --dj-ink-3: #55616e;
+  --dj-ink-4: #7a8794;
+  --dj-gold: #a96600;
+  --dj-gold-hi: #7a4a00;
+  --dj-gold-deep: #5e3900;
+  --dj-crimson: #c62828;
+  --dj-green: #1f8a4c;
+  --dj-cyan: #0b7285;
+  --dj-line-1: rgba(10, 14, 20, .08);
+  --dj-line-2: rgba(10, 14, 20, .12);
+  --dj-line-3: rgba(10, 14, 20, .16);
+  --dj-line-4: rgba(10, 14, 20, .22);
+  --dj-shadow-composer: 0 24px 60px rgba(30, 40, 55, .18);
+  --dsw-alias-button-primary-fill: #a96600;
+  --dsw-alias-button-primary-hover: #8a5200;
+  --dsw-alias-label-primary-foreground: #ffffff;
+}
+
+/* 侧栏：白玻璃 + 金/红极淡的 HUD 光 */
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [class*="sidebarCol" i] {
+  background:
+    radial-gradient(120% 46% at 0% 0%, rgba(255, 196, 107, .16), rgba(255, 196, 107, 0) 58%),
+    radial-gradient(80% 38% at 18% 100%, rgba(255, 59, 48, .05), rgba(255, 59, 48, 0) 62%),
+    linear-gradient(180deg, rgba(255, 255, 255, .82), rgba(237, 242, 247, .78)) !important;
+  box-shadow: inset -1px 0 0 rgba(10, 14, 20, .08), inset -2px 0 12px rgba(169, 102, 0, .03), inset 0 1px 0 rgba(255, 255, 255, .75);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [class*="sidebarCol" i]::after {
+  background: rgba(255, 255, 255, .72);
+  border-color: rgba(169, 102, 0, .34);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [class*="sidebarCol" i] button[class*="newSession" i] {
+  background: linear-gradient(180deg, rgba(255, 255, 255, .62), rgba(255, 255, 255, .30)) !important;
+  background-color: transparent !important;
+  color: var(--dj-gold-hi) !important;
+  border-color: rgba(169, 102, 0, .30) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .85), 0 8px 20px rgba(30, 40, 55, .08) !important;
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [class*="sidebarCol" i] [role="treeitem"][aria-selected="true"] {
+  background: linear-gradient(90deg, rgba(169, 102, 0, .13), rgba(169, 102, 0, .04));
+  color: var(--dj-ink);
+  box-shadow: inset 2px 0 0 var(--dj-gold), 0 0 14px rgba(169, 102, 0, .05);
+}
+
+/* Hero 顶栏叠层 / 底部输入卡 / chips */
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) #dj-hero-head {
+  background: linear-gradient(180deg, rgba(238, 242, 246, .96), rgba(238, 242, 246, .70) 70%, rgba(238, 242, 246, .32));
+  border-bottom-color: rgba(10, 14, 20, .08);
+  box-shadow: inset 0 -1px 0 rgba(169, 102, 0, .12);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [data-composer-card] {
+  background: linear-gradient(180deg, rgba(255, 255, 255, .94), rgba(246, 249, 252, .96)) !important;
+  box-shadow: var(--dj-shadow-composer), inset 0 1px 0 rgba(255, 255, 255, .95), 0 0 0 1px rgba(169, 102, 0, .08) !important;
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [data-phase="hero"] [class*="heroWorkspaceRow" i] button {
+  background: rgba(255, 255, 255, .58);
+  box-shadow: inset 0 0 0 1px var(--dj-line-3), 0 4px 12px rgba(30, 40, 55, .06);
+}
+
+/* 消息 / 代码块 / 工具卡 / 运行态 */
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [data-message-bubble] {
+  background: linear-gradient(180deg, rgba(255, 196, 107, .26), rgba(255, 196, 107, .14)) !important;
+  box-shadow: inset 0 0 0 1px rgba(169, 102, 0, .22), inset 0 1px 0 rgba(255, 255, 255, .55), 0 12px 30px rgba(30, 40, 55, .10);
+}
+/* 浅色：边环用深金，扫光用白高光 + 暖金柔光 */
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [data-message-bubble]::before {
+  background: conic-gradient(from var(--dj-ring-angle),
+    rgba(169, 102, 0, .90) 0deg,
+    rgba(169, 102, 0, .16) 38deg,
+    rgba(169, 102, 0, .06) 150deg,
+    rgba(216, 85, 74, .55) 168deg,
+    rgba(216, 85, 74, .12) 198deg,
+    rgba(169, 102, 0, .06) 214deg,
+    rgba(169, 102, 0, .90) 360deg);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [data-message-bubble]::after {
+  background-image:
+    linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, .55) 50%, transparent 58%),
+    radial-gradient(120% 150% at 50% 0%, rgba(255, 196, 107, .22), rgba(255, 196, 107, 0) 62%);
+  box-shadow: 0 0 20px rgba(169, 102, 0, .10);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) .md-code-block {
+  background: #f2f5f8 !important;
+  box-shadow: inset 0 0 0 1px rgba(10, 14, 20, .10), inset 0 1px 0 rgba(255, 255, 255, .85);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) .md-code-block pre,
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) .md-code-block code { color: #1f2933 !important; }
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [data-code-block-banner] {
+  background: rgba(10, 14, 20, .035) !important;
+  color: var(--dj-ink-3) !important;
+  box-shadow: inset 0 -1px 0 rgba(10, 14, 20, .08);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) .dj-tcard {
+  background: linear-gradient(180deg, rgba(255, 255, 255, .88), rgba(244, 248, 252, .78));
+  box-shadow: inset 0 0 0 1px rgba(10, 14, 20, .12), inset 2px 0 0 rgba(169, 102, 0, .55), 0 14px 30px rgba(30, 40, 55, .10);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) .dj-tcard-head {
+  background: rgba(255, 255, 255, .55);
+  border-bottom-color: rgba(10, 14, 20, .08);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) .dj-tcard-body { background: rgba(10, 14, 20, .035); }
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) .dj-tcard-out {
+  background: rgba(10, 14, 20, .04);
+  color: #2c3742;
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [data-chat-flow-kind="context"] {
+  background: rgba(255, 255, 255, .55);
+  box-shadow: inset 0 0 0 1px rgba(10, 14, 20, .08);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [data-turn-process] {
+  background: rgba(255, 255, 255, .45);
+  box-shadow: inset 0 0 0 1px rgba(10, 14, 20, .08), inset 0 1px 0 rgba(255, 255, 255, .65);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [data-chat-call-id] {
+  background: linear-gradient(90deg, rgba(255, 255, 255, .55), rgba(255, 255, 255, .28));
+  box-shadow: inset 2px 0 0 rgba(169, 102, 0, .35), inset 0 0 0 1px rgba(10, 14, 20, .08);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [data-chat-running] {
+  background: linear-gradient(90deg, rgba(169, 102, 0, .10), rgba(255, 255, 255, 0) 65%);
+  box-shadow: inset 0 0 0 1px rgba(169, 102, 0, .22), inset 0 1px 0 rgba(255, 255, 255, .55);
+}
+
+/* 菜单 / 对话框 / 遮罩 */
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [role="menu"],
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [data-menu-material] {
+  box-shadow: inset 0 0 0 1px rgba(10, 14, 20, .10), 0 18px 50px rgba(30, 40, 55, .18), inset 0 1px 0 rgba(255, 255, 255, .85);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [role="dialog"] {
+  background: rgba(252, 253, 255, .97) !important;
+  color: var(--dj-ink);
+  box-shadow: inset 0 0 0 1px rgba(10, 14, 20, .12), 0 40px 100px rgba(30, 40, 55, .22), inset 0 1px 0 rgba(255, 255, 255, .9) !important;
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [class*="_mask" i] { background-color: rgba(10, 14, 20, .28) !important; }
+
+/* 顶栏 host 文字 / 滚动条 / 选区 */
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) header[data-window-drag]::after { color: rgba(169, 102, 0, .78); }
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) ::selection { background: rgba(169, 102, 0, .22); color: #10151b; }
+/* 浅色 hero：副标题/芯片/03 的对比度（0.3.3） */
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [data-phase="hero"] [class*="titleGroup" i]::after {
+  color: rgba(140, 82, 0, .95);
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [data-phase="hero"] [class*="heroWorkspaceRow" i] button {
+  background: rgba(255, 255, 255, .58) !important;
+  color: var(--dj-ink-2) !important;
+  box-shadow: inset 0 0 0 1px rgba(10, 14, 20, .16), 0 4px 12px rgba(30, 40, 55, .06) !important;
+}
+html.dj-skin:not([data-dj-light="off"]) body:not([data-ds-dark-theme]) [data-phase="hero"] [class*="heroWorkspaceRow" i] button::before {
+  color: rgba(140, 82, 0, .95);
+}
+
+
+/* ============================================================================
+ * 18. 设置页接线（0.3.8）：档位 / 预设 / HUD 角标 / 焦点压暗 / 浅色昼面
+ * ----------------------------------------------------------------------------
+ * 设计约束：本节的规则只由 skin.js 写入的状态类/属性触发；默认配置
+ * （level=glass / preset=mark7 / hudCorners=true / focusDim=true / lightMode=porcelain）
+ * 不命中任何一条，故 0.3.7 的观感与既有断言零变化。
+ * ========================================================================== */
+
+/* 18.1 档位 full（标准）：保留 HUD 装饰与静态海报，去掉视频背景与毛玻璃 */
+html.dj-skin--full #dsh-jarvis-ambient .dj-bg-video { display: none; }
+html.dj-skin--full #dsh-jarvis-ambient .dj-bg-poster { display: block; opacity: .55; }
+html.dj-skin--full [class*="sidebarCol" i],
+html.dj-skin--full [data-composer-card] {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* 18.2 档位 accent（极简）：只保留配色 token，背景层/毛玻璃/边环/角标全关 */
+html.dj-skin--accent #dsh-jarvis-ambient { display: none !important; }
+html.dj-skin--accent #dj-hero-head,
+html.dj-skin--accent #dj-hero-deck,
+html.dj-skin--accent #root::before,
+html.dj-skin--accent #root::after { display: none !important; }
+html.dj-skin--accent [class*="sidebarCol" i] {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  background: var(--dsw-alias-bg-layer-1) !important;
+  box-shadow: inset -1px 0 0 var(--dsw-alias-border-l2) !important;
+}
+html.dj-skin--accent [data-composer-card] {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  background: var(--dsw-alias-bg-layer-2) !important;
+  box-shadow: var(--dj-shadow-composer), inset 0 0 0 1px var(--dsw-alias-border-l2) !important;
+}
+html.dj-skin--accent [data-composer-card]::before,
+html.dj-skin--accent [data-composer-card]::after,
+html.dj-skin--accent [data-message-bubble]::before,
+html.dj-skin--accent [data-message-bubble]::after { display: none !important; }
+
+/* 18.3 预设：只改装饰色系（金/红 → 冷青 / 单色），主色仍由 skin.accent 控制 */
+html.dj-skin[data-dj-preset="hud"] #root::before,
+html.dj-skin[data-dj-preset="hud"] [data-composer-card]::before,
+html.dj-skin[data-dj-preset="hud"] [data-message-bubble]::before,
+html.dj-skin[data-dj-preset="hud"] [class*="sidebarCol" i]::after {
+  filter: hue-rotate(118deg) saturate(1.05);
+}
+html.dj-skin[data-dj-preset="noir"] #root::before,
+html.dj-skin[data-dj-preset="noir"] [data-composer-card]::before,
+html.dj-skin[data-dj-preset="noir"] [data-message-bubble]::before,
+html.dj-skin[data-dj-preset="noir"] [class*="sidebarCol" i]::after {
+  filter: grayscale(1) brightness(1.15);
+}
+
+/* 18.4 HUD 角标关闭：skin.js 把 --dj-corner 置 0（四角枢轴与显影动画共用该变量） */
+
+/* 18.5 焦点压暗：过渡时长随动效档位，motion=off 时立即切换 */
+html.dj-skin #dsh-jarvis-ambient .dj-bg-video { transition: opacity 420ms ease-out; }
+html.dj-skin--motion-reduced #dsh-jarvis-ambient .dj-bg-video { transition-duration: 120ms; }
+html.dj-skin--motion-off #dsh-jarvis-ambient .dj-bg-video { transition: none; }

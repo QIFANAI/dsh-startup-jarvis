@@ -1,0 +1,16 @@
+{
+  "name": "dsh-startup-jarvis",
+  "version": "0.3.9",
+  "tag": "v0.3.9",
+  "repository": "https://github.com/QIFANAI/dsh-startup-jarvis",
+  "distribution": "full-media-source",
+  "mediaIncluded": true,
+  "hostTested": "DSH 0.2.2-rc.5",
+  "artifacts": [
+    {
+      "file": "dsh-startup-jarvis-0.3.9.tgz",
+      "bytes": 56567344,
+      "sha256": "61049915C260F003DD383A5EE3871DB60B8966D14DFDC1E3B0AA722A0E0A0DB4"
+    }
+  ]
+}
